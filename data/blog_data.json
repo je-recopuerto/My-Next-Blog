@@ -1,0 +1,121 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Teknoloji",
+      "slug": "teknoloji"
+    },
+    {
+      "id": 2,
+      "name": "Yazılım",
+      "slug": "yazilim"
+    },
+    {
+      "id": 3,
+      "name": "Oyun",
+      "slug": "oyun"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "aliyilmaz",
+      "display_name": "Ali Yılmaz",
+      "email": "ali@example.com"
+    },
+    {
+      "id": 2,
+      "username": "ayseozturk",
+      "display_name": "Ayşe Öztürk",
+      "email": "ayse@example.com"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Yapay Zeka Nedir?",
+      "slug": "yapay-zeka-nedir",
+      "category_id": 1,
+      "author_id": 1,
+      "summary": "Yapay zeka, makinelerin insan gibi düşünmesini sağlayan teknolojidir. Bu yazıda temel kavramları açıklayacağız.",
+      "content": "# Yapay Zeka Nedir?\nYapay zeka (AI), bilgisayarların insan benzeri zeka sergilemesini sağlayan bir teknoloji dalıdır. **Makine öğrenimi** ve **derin öğrenme** gibi alt dalları içerir.\n\n## Temel Kavramlar\n- **Makine Öğrenimi**: Veriden öğrenme.\n- **Derin Öğrenme**: Sinir ağları ile karmaşık problemleri çözme.\n\nBu alanda daha fazla bilgi için takipte kalın!",
+      "image_url": "https://picsum.photos/id/1/1920/1080",
+      "published_date": "2025-09-01T10:00:00Z",
+      "tags": ["yapay zeka", "teknoloji", "makine öğrenimi"]
+    },
+    {
+      "id": 2,
+      "title": "Python ile İlk Adımlar",
+      "slug": "python-ile-ilk-adimlar",
+      "category_id": 2,
+      "author_id": 2,
+      "summary": "Python programlama diline yeni başlayanlar için basit bir rehber.",
+      "content": "# Python ile İlk Adımlar\nPython, öğrenmesi kolay ve güçlü bir programlama dilidir. \n\n## Neden Python?\n- **Okunabilirlik**: Temiz söz dizimi.\n- **Çok yönlülük**: Web, veri bilimi, otomasyon.\n\n### Örnek Kod\n```python\nprint('Merhaba, Dünya!')\n```",
+      "image_url": "https://picsum.photos/id/2/1920/1080",
+      "published_date": "2025-09-02T12:00:00Z",
+      "tags": ["python", "yazilim", "programlama"]
+    },
+    {
+      "id": 3,
+      "title": "Minimalist Yaşam Rehberi",
+      "slug": "minimalist-yasam-rehberi",
+      "category_id": 3,
+      "author_id": 1,
+      "summary": "Daha az eşya, daha çok huzur. Minimalist yaşam tarzı nasıl benimsenir?",
+      "content": "# Minimalist Yaşam Rehberi\nMinimalizm, hayatınızdaki fazlalıkları azaltarak daha anlamlı bir yaşam sürmenizi sağlar.\n\n## Adımlar\n1. **Eşyaları Azaltın**: Gereksiz eşyalardan kurtulun.\n2. **Önceliklendirin**: Gerçekten neyin önemli olduğuna karar verin.\n\n> Minimalizm, özgürlük demektir!",
+      "image_url": "https://picsum.photos/id/3/1920/1080",
+      "published_date": "2025-09-03T15:00:00Z",
+      "tags": ["minimalizm", "yasam", "huzur"]
+    },
+        {
+      "id": 4,
+      "title": "Minimalist Yaşam Rehberi",
+      "slug": "minimalist-yasam-rehberi",
+      "category_id": 3,
+      "author_id": 1,
+      "summary": "Daha az eşya, daha çok huzur. Minimalist yaşam tarzı nasıl benimsenir? lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempordasdsadsa incididunt ut labore et dolore magna aliqua.",
+      "content": "# Minimalist Yaşam Rehberi\nMinimalizm, hayatınızdaki fazlalıkları azaltarak daha anlamlı bir yaşam sürmenizi sağlar.\n\n## Adımlar\n1. **Eşyaları Azaltın**: Gereksiz eşyalardan kurtulun.\n2. **Önceliklendirin**: Gerçekten neyin önemli olduğuna karar verin.\n\n> Minimalizm, özgürlük demektir!",
+      "image_url": "https://picsum.photos/id/3/1920/1080",
+      "published_date": "2025-09-03T15:00:00Z",
+      "tags": ["minimalizm", "yasam", "huzur"]
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "post_id": 1,
+      "user_id": 2,
+      "content": "Çok bilgilendirici bir yazı, teşekkürler!",
+      "status": "approved",
+      "created_at": "2025-09-01T12:30:00Z"
+    },
+    {
+      "id": 2,
+      "post_id": 1,
+      "user_id": null,
+      "guest_name": "Misafir Kullanıcı",
+      "guest_email": "misafir@example.com",
+      "content": "Yapay zeka hakkında daha fazla yazı bekliyoruz!",
+      "status": "pending",
+      "created_at": "2025-09-01T13:00:00Z"
+    },
+    {
+      "id": 3,
+      "post_id": 2,
+      "user_id": 1,
+      "content": "Python gerçekten harika bir dil, bu rehber çok işime yaradı!",
+      "status": "approved",
+      "created_at": "2025-09-02T14:00:00Z"
+    },
+    {
+      "id": 4,
+      "post_id": 3,
+      "user_id": null,
+      "guest_name": "Ziyaretçi",
+      "guest_email": "ziyaretci@example.com",
+      "content": "Minimalizm üzerine daha fazla ipucu verir misiniz?",
+      "status": "pending",
+      "created_at": "2025-09-03T16:00:00Z"
+    }
+  ]
+}
