@@ -1,21 +1,33 @@
 import mongoose from "mongoose";
+import './CategoryModel'; // Category model'ini yükle
+import './UserModel'; // User model'ini yükle
 
 const Schema = new mongoose.Schema({
     title:{
         type:String,
         required:true,
     },
-    description:{
+    slug:{
+        type:String,
+        required:true,
+    },
+    summary:{
+        type:String,
+        required:true,
+    },
+    content:{
         type:String,
         required:true,
     },
     category:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
         required:true,
     },
-    author:{
-        type:String,
-        required:true,
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     image:{
         type:String,
@@ -28,6 +40,10 @@ const Schema = new mongoose.Schema({
     date:{
         type:Date,
         default:Date.now
+    },
+    visible: {
+        type: Boolean,
+        default: false
     }
 })
 

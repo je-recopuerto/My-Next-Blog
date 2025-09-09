@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Navbar from "./components/Navbar";
 import "./globals.css";
-import { borel, pt } from "./ui/fonts";
+import { pt } from "./ui/fonts";
+import AuthSessionProvider from "./components/SessionProvider";
 
 
 export const metadata: Metadata = {
@@ -19,7 +19,9 @@ export default function RootLayout({
       <body
         className={`${pt.className}`}
       >
-        {children}
+        <AuthSessionProvider>
+          {children}
+        </AuthSessionProvider>
       </body>
     </html>
   );

@@ -9,7 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.22.0",
     "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "mongoose": "^8.18.1",
     "next": "15.5.2",
     "next-auth": "^4.24.11",
@@ -22,6 +25,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

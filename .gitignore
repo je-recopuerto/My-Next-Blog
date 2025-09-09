@@ -28,6 +28,19 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# local env files
+.env*.local
+.env
+.env.development
+.env.test
+.env.production
+
+# security
+*.key
+*.pem
+*.p12
+*.pfx
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)

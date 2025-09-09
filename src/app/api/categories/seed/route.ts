@@ -13,7 +13,6 @@ export async function POST() {
     try {
         await ConnectDB();
         
-        // Kategoriler zaten var mı kontrol et
         const existingCategories = await CategoryModel.find({});
         
         if (existingCategories.length > 0) {
@@ -23,7 +22,6 @@ export async function POST() {
             });
         }
 
-        // Kategorileri oluştur
         const categories = [];
         for (const cat of initialCategories) {
             const slug = cat.name

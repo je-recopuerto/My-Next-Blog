@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { ConnectDB } from "../../../../lib/config/db";
 import CategoryModel from "../../../../lib/models/CategoryModel";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET() {
     try {
@@ -22,6 +24,15 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const session = await getServerSession(authOptions)
+    
+    if (!session) {
+        return NextResponse.json({ 
+            success: false, 
+            message: "Yetkisiz erişim" 
+        }, { status: 401 })
+    }
+
     try {
         await ConnectDB();
         

@@ -1,14 +1,24 @@
 import { NextResponse } from "next/server"
 import { ConnectDB } from "../../../../lib/config/db"
-import { writeFile } from "fs"
 import BlogModel from "../../../../lib/models/BlogModel"
+import UserModel from "../../../../lib/models/UserModel"
+import CategoryModel from "../../../../lib/models/CategoryModel"
+import { getServerSession } from "next-auth"
+import { authOptions } from "../auth/[...nextauth]/route"
+import cloudinary from '../../../../lib/config/cloudinary';
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
         await ConnectDB();
         
-        // MongoDB'den tüm blogları çek
-        const blogs = await BlogModel.find({}).sort({ date: -1 });
+        // Model'lerin yüklendiğinden emin ol
+        CategoryModel;
+        UserModel;
+        
+        const blogs = await BlogModel.find({})
+        .populate('author', 'name email avatar')
+        .populate('category', 'name slug')
+        .sort({ date: -1 });
         
         return NextResponse.json({ 
             success: true, 
@@ -25,25 +35,58 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user?.email) {
+        return NextResponse.json({ 
+            success: false, 
+            message: "Yetkisiz erişim" 
+        }, { status: 401 })
+    }
+
     try {
         await ConnectDB();
         
+        // Blog oluşturma yetkisi kontrolü
+        const user = await UserModel.findOne({ email: session.user.email });
+        if (!user?.permissions?.includes("blog:create")) {
+            return NextResponse.json({ 
+                success: false, 
+                message: "Blog oluşturma yetkiniz yok" 
+            }, { status: 403 })
+        }
+        
         const formData = await request.formData()
-        const timestamp = Date.now();
-
         const image = formData.get("image") as File;
-        const imageByteData = await image.arrayBuffer();
-        const buffer = Buffer.from(imageByteData);
-        const path = `./public/blog/${timestamp}-${image.name}`;
-        await writeFile(path, buffer, (err) => { if (err) console.log(err) });
-        const imgUrl = `/blog/${timestamp}-${image.name}`;
+        let imgUrl = "";
+        if (image) {
+            const arrayBuffer = await image.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const uploadResult = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { folder: 'blog-images' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                ).end(buffer);
+            });
+            // @ts-expect-error Cloudinary response type issue
+            imgUrl = uploadResult.secure_url;
+        }
+        console.log("session.user ==> ", session.user);
+        // author alanı artık ObjectId olmalı
+        // author: formData.get("author") yerine, oturumdaki kullanıcının _id'si alınmalı
+        const authorUser = await UserModel.findOne({ email: session.user.email });
         const blogData = {
             title: formData.get("title"),
-            description: formData.get("description"),
+            slug: formData.get("title")?.toString().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'),
+            summary: formData.get("content")?.toString().slice(0, 120) || '',
+            content: formData.get("content"),
             category: formData.get("category"),
-            author: formData.get("author"),
+            author: authorUser?._id, // ObjectId
             image: imgUrl,
-            authorImg: formData.get("authorImg"),
+            authorImg: session.user.image,
         }
 
         await BlogModel.create(blogData);

@@ -5,19 +5,20 @@ export default function AboutPage() {
     <MainLayout>
       <main className="py-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-6">Hakkımda</h1>
+          <h1 className="text-4xl font-bold mb-6">About Me</h1>
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 mb-4">
-              Merhaba! Ben Emirhan, yazılım geliştirici ve teknoloji meraklısıyım. 
-              Bu blogda programlama, teknoloji trendleri ve kişisel projelerim hakkında yazıyorum.
+              Hello! I'm Emirhan, a software developer and technology enthusiast.
+              On this blog, I write about programming, technology trends, and my
+              personal projects.
             </p>
             <p className="text-gray-700 mb-4">
-              Özellikle web geliştirme, JavaScript, React ve modern teknolojiler konularında 
-              deneyimlerimi paylaşmayı seviyorum.
+              I especially enjoy sharing my experiences in web development,
+              JavaScript, React, and modern technologies.
             </p>
             <p className="text-gray-700">
-              Benimle iletişime geçmek isterseniz, sosyal medya hesaplarımdan 
-              veya e-posta yoluyla ulaşabilirsiniz.
+              If you'd like to get in touch with me, feel free to reach out via my
+              social media accounts or email.
             </p>
           </div>
         </div>

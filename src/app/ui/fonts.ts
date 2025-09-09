@@ -1,4 +1,4 @@
-import { Borel, Archivo, PT_Sans, Commissioner} from "next/font/google";
+import { Borel, Archivo, PT_Sans} from "next/font/google";
  
 
 export const archivo = Archivo({

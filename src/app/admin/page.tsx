@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 interface Blog {
   _id: string;
   title: string;
-  description: string;
-  category: string;
-  author: string;
+  content: string;
+  summary: string;
+  category: string | { _id: string; name: string; slug?: string };
+  author: string | { _id: string; name: string; email?: string; avatar?: string };
   image: string;
   date: string;
 }
@@ -93,8 +94,12 @@ const AdminPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{blog.category}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{blog.author}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {typeof blog.category === 'object' && blog.category !== null ? blog.category.name : blog.category}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {typeof blog.author === 'object' && blog.author !== null ? blog.author.name : blog.author}
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {new Date(blog.date).toLocaleDateString('tr-TR')}
                       </td>

@@ -1,14 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
 import { FaEdit, FaTrash, FaEye, FaPlus, FaSearch, FaTimes, FaSave } from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
+
 
 interface Blog {
   _id: string;
   title: string;
-  description: string;
-  category: string;
-  author: string;
+  content: string;
+  category: string | { _id: string; name: string; slug?: string };
+  author: string | { _id: string; name: string; email?: string; avatar?: string };
   image: string;
   date: string;
 }
@@ -27,7 +28,7 @@ const BlogListPage = () => {
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
   const [editForm, setEditForm] = useState({
     title: "",
-    description: "",
+    content: "",
     category: "",
     author: ""
   });
@@ -61,14 +62,21 @@ const BlogListPage = () => {
     if (searchTerm) {
       filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.author.toLowerCase().includes(searchTerm.toLowerCase())
+        blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (typeof blog.author === 'object' && blog.author !== null
+          ? blog.author.name.toLowerCase().includes(searchTerm.toLowerCase())
+          : blog.author.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
     // Kategori filtresi
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(blog => blog.category === selectedCategory);
+      filtered = filtered.filter(blog => {
+        if (typeof blog.category === 'object' && blog.category !== null) {
+          return blog.category._id === selectedCategory || blog.category.name === selectedCategory;
+        }
+        return blog.category === selectedCategory;
+      });
     }
 
     setFilteredBlogs(filtered);
@@ -84,9 +92,9 @@ const BlogListPage = () => {
     setSelectedBlog(blog);
     setEditForm({
       title: blog.title,
-      description: blog.description,
-      category: blog.category,
-      author: blog.author
+      content: blog.content,
+      category: typeof blog.category === 'object' && blog.category !== null ? blog.category._id : blog.category,
+      author: typeof blog.author === 'object' && blog.author !== null ? blog.author._id : blog.author
     });
     setEditModal(true);
   };
@@ -147,6 +155,7 @@ const BlogListPage = () => {
       });
       
       const data = await response.json();
+      console.log("data ==> ", data);
       
       if (data.success) {
         // Listeyi güncelle
@@ -163,13 +172,17 @@ const BlogListPage = () => {
   };
 
   const getUniqueCategories = () => {
-    const categories = blogs.map(blog => blog.category);
+    const categories = blogs.map(blog => {
+      if (typeof blog.category === 'object' && blog.category !== null) {
+        return blog.category._id + '|' + blog.category.name;
+      }
+      return blog.category;
+    });
     return [...new Set(categories)];
   };
 
   return (
     <>
-      <Sidebar />
       <div className="flex-1 p-8 bg-gray-50 min-h-screen">
         {/* Header */}
         <div className="mb-8">
@@ -211,7 +224,14 @@ const BlogListPage = () => {
                 >
                   <option value="all">Tüm Kategoriler</option>
                   {getUniqueCategories().map(category => (
-                    <option key={category} value={category}>{category}</option>
+                    (() => {
+                      if (typeof category === 'string' && category.includes('|')) {
+                        const [id, name] = category.split('|');
+                        return <option key={id} value={id}>{name}</option>;
+                      } else {
+                        return <option key={category} value={category}>{category}</option>;
+                      }
+                    })()
                   ))}
                 </select>
               </div>
@@ -288,9 +308,9 @@ const BlogListPage = () => {
                               {blog.title}
                             </p>
                             <p className="text-sm text-gray-500 truncate max-w-xs mt-1">
-                              {blog.description.length > 60 
-                                ? blog.description.substring(0, 60) + "..." 
-                                : blog.description}
+                              {blog.content.length > 60 
+                                ? blog.content.substring(0, 60) + "..." 
+                                : blog.content}
                             </p>
                           </div>
                         </div>
@@ -299,7 +319,7 @@ const BlogListPage = () => {
                       {/* Kategori */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {blog.category}
+                            {typeof blog.category === 'object' && blog.category !== null ? blog.category.name : blog.category}
                         </span>
                       </td>
 
@@ -307,7 +327,7 @@ const BlogListPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div className="flex items-center">
                           <span className="text-gray-400 mr-2">👤</span>
-                          {blog.author}
+                            {typeof blog.author === 'object' && blog.author !== null ? blog.author.name : blog.author}
                         </div>
                       </td>
 
@@ -400,16 +420,77 @@ const BlogListPage = () => {
               />
               <div className="mb-4">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  {selectedBlog.category}
+                  {typeof selectedBlog.category === 'object' && selectedBlog.category !== null ? selectedBlog.category.name : selectedBlog.category}
                 </span>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{selectedBlog.title}</h1>
               <div className="flex items-center text-sm text-gray-500 mb-6">
-                <span className="mr-4">👤 {selectedBlog.author}</span>
+                <span className="mr-4">👤 {typeof selectedBlog.author === 'object' && selectedBlog.author !== null ? selectedBlog.author.name : selectedBlog.author}</span>
                 <span>{new Date(selectedBlog.date).toLocaleDateString('tr-TR')}</span>
               </div>
               <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed">{selectedBlog.description}</p>
+                <ReactMarkdown
+                            components={{
+                              h1: ({ node, ...props }) => (
+                                <h1 className="text-4xl font-bold text-gray-900 mb-6 mt-8 border-b-2 border-gray-200 pb-3" {...props} />
+                              ),
+                              h2: ({ node, ...props }) => (
+                                <h2 className="text-3xl font-semibold text-gray-800 mb-4 mt-6 border-l-4 border-blue-500 pl-4" {...props} />
+                              ),
+                              h3: ({ node, ...props }) => (
+                                <h3 className="text-2xl font-semibold text-gray-800 mb-3 mt-5" {...props} />
+                              ),
+                              h4: ({ node, ...props }) => (
+                                <h4 className="text-xl font-medium text-gray-700 mb-2 mt-4" {...props} />
+                              ),
+                              p: ({ node, ...props }) => (
+                                <p className="text-gray-700 leading-relaxed mb-4 text-lg" {...props} />
+                              ),
+                              a: ({ node, ...props }) => (
+                                <a
+                                  className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 hover:decoration-blue-800 transition-colors duration-200"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  {...props}
+                                />
+                              ),
+                              ul: ({ node, ...props }) => (
+                                <ul className="list-none space-y-2 mb-6 pl-4" {...props} />
+                              ),
+                              ol: ({ node, ...props }) => (
+                                <ol className="list-decimal list-inside space-y-2 mb-6 pl-4" {...props} />
+                              ),
+                              li: ({ node, ...props }) => (
+                                <li className="relative text-gray-700 pl-6 before:content-['•'] before:absolute before:left-0 before:text-blue-500 before:font-bold" {...props} />
+                              ),
+                              img: ({ node, ...props }) => (
+                                <img className="w-full rounded-xl shadow-lg my-6 hover:shadow-xl transition-shadow duration-300" {...props} />
+                              ),
+                              blockquote: ({ node, ...props }) => (
+                                <blockquote className="border-l-4 border-blue-500 bg-blue-50 p-4 my-6 italic text-gray-700 rounded-r-lg" {...props} />
+                              ),
+                              code: ({ node, ...props }) => (
+                                <code className="bg-gray-100 text-red-600 px-2 py-1 rounded text-sm font-mono" {...props} />
+                              ),
+                              pre: ({ node, ...props }) => (
+                                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 shadow-lg" {...props} />
+                              ),
+                              table: ({ node, ...props }) => (
+                                <table className="w-full border-collapse border border-gray-300 my-6 shadow-sm rounded-lg overflow-hidden" {...props} />
+                              ),
+                              th: ({ node, ...props }) => (
+                                <th className="border border-gray-300 bg-gray-100 px-4 py-2 text-left font-semibold" {...props} />
+                              ),
+                              td: ({ node, ...props }) => (
+                                <td className="border border-gray-300 px-4 py-2" {...props} />
+                              ),
+                              hr: ({ node, ...props }) => (
+                                <hr className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" {...props} />
+                              ),
+                            }}
+                          >
+                            {selectedBlog.content}
+                          </ReactMarkdown>
               </div>
             </div>
           </div>
@@ -449,8 +530,8 @@ const BlogListPage = () => {
                     Açıklama
                   </label>
                   <textarea
-                    value={editForm.description}
-                    onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                    value={editForm.content}
+                    onChange={(e) => setEditForm({...editForm, content: e.target.value})}
                     rows={6}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
@@ -522,7 +603,7 @@ const BlogListPage = () => {
                   Blog Yazısını Sil
                 </h3>
                 <p className="text-sm text-gray-500 mb-4">
-                  "<strong>{selectedBlog.title}</strong>" başlıklı blog yazısını silmek istediğinizden emin misiniz? 
+                  &quot;<strong>{selectedBlog.title}</strong>&quot; başlıklı blog yazısını silmek istediğinizden emin misiniz? 
                   Bu işlem geri alınamaz.
                 </p>
               </div>
