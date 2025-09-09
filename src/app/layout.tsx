@@ -1,25 +1,8 @@
 import type { Metadata } from "next";
-import { Borel, Archivo, PT_Sans, Commissioner} from "next/font/google";
 import Navbar from "./components/Navbar";
 import "./globals.css";
+import { borel, pt } from "./ui/fonts";
 
-const archivo = Archivo({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-archivo",
-});
-
-const borel = Borel({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-borel",
-});
-
-const pt = PT_Sans({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-pt-sans",
-});
 
 export const metadata: Metadata = {
   title: "Emirhan's Blog",
@@ -32,14 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr">
       <body
         className={`${pt.className}`}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <Navbar borel = {borel}/>
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
