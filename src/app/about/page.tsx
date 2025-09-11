@@ -8,7 +8,7 @@ export default function AboutPage() {
           <h1 className="text-4xl font-bold mb-6">About Me</h1>
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 mb-4">
-              Hello! I'm Emirhan, a software developer and technology enthusiast.
+              Hello! I{"'"}m Emirhan, a software developer and technology enthusiast.
               On this blog, I write about programming, technology trends, and my
               personal projects.
             </p>
