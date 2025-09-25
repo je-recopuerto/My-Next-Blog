@@ -24,14 +24,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ setImage, imagePreview, setIm
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        Blog Resmi *
+        Blog Image *
       </label>
       <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
         {imagePreview ? (
           <div className="space-y-4">
             <img 
               src={imagePreview} 
-              alt="Önizleme" 
+              alt="Preview" 
               className="mx-auto h-48 w-full object-cover rounded-lg"
             />
             <button
@@ -42,13 +42,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ setImage, imagePreview, setIm
               }}
               className="text-red-600 hover:text-red-800 text-sm"
             >
-              Resmi Kaldır
+              Remove Image
             </button>
           </div>
         ) : (
           <div className="pointer-events-none">
             <FaUpload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <p className="text-gray-600">Resim yüklemek için tıklayın</p>
+            <p className="text-gray-600">Click to upload an image</p>
             <p className="text-sm text-gray-400">PNG, JPG, JPEG (Max. 5MB)</p>
           </div>
         )}

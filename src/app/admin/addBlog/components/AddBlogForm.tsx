@@ -50,11 +50,11 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
     <div className="bg-white rounded-lg shadow-sm border">
       <form onSubmit={handleSubmit} className="p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Sol Kolon */}
+          {/* Left Column */}
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Blog Başlığı *
+                Blog Title *
               </label>
               <input
                 type="text"
@@ -62,18 +62,18 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
                 value={formData.title}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Blog başlığını girin..."
+                placeholder="Enter blog title..."
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kategori *
+                Category *
               </label>
               {categoriesLoading ? (
                 <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
-                  Kategoriler yükleniyor...
+                  Loading categories...
                 </div>
               ) : (
                 <select
@@ -83,7 +83,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
-                  <option value="">Kategori seçin...</option>
+                  <option value="">Select a category...</option>
                   {categories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
@@ -98,7 +98,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
               </label>
               <input
                 type="text"
-                name="summary" // Düzeltildi: "title" yerine "summary"
+                name="summary"
                 value={formData.summary}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -128,7 +128,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
             onChange={handleInputChange}
             rows={10}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Blog içeriğini buraya yazın... (Markdown desteklenir)"
+            placeholder="Write blog content here... (Markdown supported)"
             required
           />
         </div>
@@ -140,7 +140,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
             className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2"
           >
             <FaTimes className="w-4 h-4" />
-            İptal
+            Cancel
           </button>
           <button
             type="submit"
@@ -148,7 +148,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FaSave className="w-4 h-4" />
-            {loading ? "Kaydediliyor..." : "Blog Oluştur"}
+            {loading ? "Saving..." : "Create Blog"}
           </button>
         </div>
       </form>

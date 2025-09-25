@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from "react";
 
@@ -29,7 +28,7 @@ const AdminPage = () => {
         setBlogs(data.blogs);
       }
     } catch (error) {
-      console.error('Blog yükleme hatası:', error);
+      console.error('Error loading blogs:', error);
     } finally {
       setLoading(false);
     }
@@ -42,39 +41,39 @@ const AdminPage = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Blog Yazıları</h2>
-            <p className="text-gray-600">Toplam {blogs.length} yazı</p>
+            <h2 className="text-xl font-semibold mb-2">Blog Posts</h2>
+            <p className="text-gray-600">Total {blogs.length} posts</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Kullanıcılar</h2>
-            <p className="text-gray-600">Toplam 2 kullanıcı</p>
+            <h2 className="text-xl font-semibold mb-2">Users</h2>
+            <p className="text-gray-600">Total 2 users</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Görüntülenmeler</h2>
-            <p className="text-gray-600">Bu ay 1,234 görüntülenme</p>
+            <h2 className="text-xl font-semibold mb-2">Views</h2>
+            <p className="text-gray-600">1,234 views this month</p>
           </div>
         </div>
 
-        {/* Blog Listesi */}
+        {/* Blog List */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b">
-            <h2 className="text-2xl font-semibold">Blog Yazıları</h2>
+            <h2 className="text-2xl font-semibold">Blog Posts</h2>
           </div>
           
           {loading ? (
-            <div className="p-6 text-center">Yükleniyor...</div>
+            <div className="p-6 text-center">Loading...</div>
           ) : blogs.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">Henüz blog yazısı yok</div>
+            <div className="p-6 text-center text-gray-500">No blog posts yet</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Başlık</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yazar</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Author</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -101,11 +100,11 @@ const AdminPage = () => {
                         {typeof blog.author === 'object' && blog.author !== null ? blog.author.name : blog.author}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
-                        {new Date(blog.date).toLocaleDateString('tr-TR')}
+                        {new Date(blog.date).toLocaleDateString('en-US')}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium space-x-2">
-                        <button className="text-blue-600 hover:text-blue-900">Düzenle</button>
-                        <button className="text-red-600 hover:text-red-900">Sil</button>
+                        <button className="text-blue-600 hover:text-blue-900">Edit</button>
+                        <button className="text-red-600 hover:text-red-900">Delete</button>
                       </td>
                     </tr>
                   ))}

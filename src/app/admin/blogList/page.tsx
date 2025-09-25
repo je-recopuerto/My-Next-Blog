@@ -1,17 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FaEdit, FaTrash, FaEye, FaPlus, FaSearch, FaTimes, FaSave } from "react-icons/fa";
-import ReactMarkdown from "react-markdown";
-
+import { FaPlus } from "react-icons/fa";
+import BlogFilters from "./components/BlogFilters";
+import BlogTable from "./components/BlogTable";
+import ViewBlogModal from "./components/ViewBlogModal";
+import EditBlogModal from "./components/EditBlogModal";
+import DeleteBlogModal from "./components/DeleteBlogModal";
+import EmptyState from "./components/EmptyState";
 
 interface Blog {
   _id: string;
   title: string;
   content: string;
   category: string | { _id: string; name: string; slug?: string };
-  author: string | { _id: string; name: string; email?: string; avatar?: string };
+  author:
+    | string
+    | { _id: string; name: string; email?: string; avatar?: string };
   image: string;
   date: string;
+}
+
+interface EditForm {
+  title: string;
+  content: string;
+  category: string;
+  author: string;
 }
 
 const BlogListPage = () => {
@@ -26,12 +39,6 @@ const BlogListPage = () => {
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
-  const [editForm, setEditForm] = useState({
-    title: "",
-    content: "",
-    category: "",
-    author: ""
-  });
 
   useEffect(() => {
     fetchBlogs();
@@ -43,13 +50,13 @@ const BlogListPage = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch('/api/blog');
+      const response = await fetch("/api/blog");
       const data = await response.json();
       if (data.success) {
         setBlogs(data.blogs);
       }
     } catch (error) {
-      console.error('Blog yükleme hatası:', error);
+      console.error("Error loading blogs:", error);
     } finally {
       setLoading(false);
     }
@@ -58,22 +65,26 @@ const BlogListPage = () => {
   const filterBlogs = () => {
     let filtered = blogs;
 
-    // Arama filtresi
+    // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(blog =>
-        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (typeof blog.author === 'object' && blog.author !== null
-          ? blog.author.name.toLowerCase().includes(searchTerm.toLowerCase())
-          : blog.author.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(
+        (blog) =>
+          blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (typeof blog.author === "object" && blog.author !== null
+            ? blog.author.name.toLowerCase().includes(searchTerm.toLowerCase())
+            : blog.author.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    // Kategori filtresi
+    // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(blog => {
-        if (typeof blog.category === 'object' && blog.category !== null) {
-          return blog.category._id === selectedCategory || blog.category.name === selectedCategory;
+      filtered = filtered.filter((blog) => {
+        if (typeof blog.category === "object" && blog.category !== null) {
+          return (
+            blog.category._id === selectedCategory ||
+            blog.category.name === selectedCategory
+          );
         }
         return blog.category === selectedCategory;
       });
@@ -82,7 +93,7 @@ const BlogListPage = () => {
     setFilteredBlogs(filtered);
   };
 
-  // Modal açma fonksiyonları
+  // Modal opening functions
   const openViewModal = (blog: Blog) => {
     setSelectedBlog(blog);
     setViewModal(true);
@@ -90,12 +101,6 @@ const BlogListPage = () => {
 
   const openEditModal = (blog: Blog) => {
     setSelectedBlog(blog);
-    setEditForm({
-      title: blog.title,
-      content: blog.content,
-      category: typeof blog.category === 'object' && blog.category !== null ? blog.category._id : blog.category,
-      author: typeof blog.author === 'object' && blog.author !== null ? blog.author._id : blog.author
-    });
     setEditModal(true);
   };
 
@@ -104,7 +109,7 @@ const BlogListPage = () => {
     setDeleteModal(true);
   };
 
-  // Modal kapatma fonksiyonu
+  // Modal closing function
   const closeModals = () => {
     setViewModal(false);
     setEditModal(false);
@@ -112,69 +117,69 @@ const BlogListPage = () => {
     setSelectedBlog(null);
   };
 
-  // Blog güncelleme
-  const updateBlog = async () => {
+  // Blog update
+  const updateBlog = async (editForm: EditForm) => {
     if (!selectedBlog) return;
 
     try {
       const response = await fetch(`/api/blog/${selectedBlog._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(editForm),
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
-        // Listeyi güncelle
-        setBlogs(blogs.map(blog => 
-          blog._id === selectedBlog._id 
-            ? { ...blog, ...editForm }
-            : blog
-        ));
+        // Update the list
+        setBlogs(
+          blogs.map((blog) =>
+            blog._id === selectedBlog._id ? { ...blog, ...editForm } : blog
+          )
+        );
         closeModals();
-        alert("Blog başarıyla güncellendi!");
+        alert("Blog updated successfully!");
       } else {
-        alert(data.message || "Blog güncellenirken hata oluştu!");
+        alert(data.message || "An error occurred while updating the blog!");
       }
     } catch (error) {
-      console.error('Blog güncelleme hatası:', error);
-      alert("Blog güncellenirken bir hata oluştu!");
+      console.error("Blog update error:", error);
+      alert("An error occurred while updating the blog!");
     }
   };
 
-  // Blog silme
+  // Blog deletion
   const deleteBlog = async () => {
     if (!selectedBlog) return;
 
     try {
       const response = await fetch(`/api/blog/${selectedBlog._id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       const data = await response.json();
       console.log("data ==> ", data);
-      
+
       if (data.success) {
-        // Listeyi güncelle
-        setBlogs(blogs.filter(blog => blog._id !== selectedBlog._id));
+        // Update the list
+        setBlogs(blogs.filter((blog) => blog._id !== selectedBlog._id));
         closeModals();
-        alert("Blog başarıyla silindi!");
+        alert("Blog deleted successfully!");
       } else {
-        alert(data.message || "Blog silinirken hata oluştu!");
+        alert(data.message || "An error occurred while deleting the blog!");
       }
     } catch (error) {
-      console.error('Blog silme hatası:', error);
-      alert("Blog silinirken bir hata oluştu!");
+      console.error("Blog deletion error:", error);
+      alert("An error occurred while deleting the blog!");
     }
   };
 
   const getUniqueCategories = () => {
-    const categories = blogs.map(blog => {
-      if (typeof blog.category === 'object' && blog.category !== null) {
-        return blog.category._id + '|' + blog.category.name;
+    const categories = blogs.map((blog) => {
+      if (typeof blog.category === "object" && blog.category !== null) {
+        return blog.category._id + "|" + blog.category.name;
       }
       return blog.category;
     });
@@ -188,446 +193,76 @@ const BlogListPage = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Blog Yazıları</h1>
-              <p className="text-gray-600 mt-2">Tüm blog yazılarınızı yönetin</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Blog Posts
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Manage all your blog posts
+              </p>
             </div>
-            <button 
-              onClick={() => window.location.href = "/admin/addBlog"}
+            <button
+              onClick={() => (window.location.href = "/admin/addBlog")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <FaPlus className="w-4 h-4" />
-              Yeni Blog
+              New Blog
             </button>
           </div>
 
-          {/* Filtreleme ve Arama */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <div className="flex flex-col md:flex-row gap-4">
-              {/* Arama */}
-              <div className="flex-1 relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Blog ara (başlık, açıklama, yazar)..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              
-              {/* Kategori Filtresi */}
-              <div className="md:w-48">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">Tüm Kategoriler</option>
-                  {getUniqueCategories().map(category => (
-                    (() => {
-                      if (typeof category === 'string' && category.includes('|')) {
-                        const [id, name] = category.split('|');
-                        return <option key={id} value={id}>{name}</option>;
-                      } else {
-                        return <option key={category} value={category}>{category}</option>;
-                      }
-                    })()
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="mt-3 text-sm text-gray-600">
-              Toplam {blogs.length} blog - Gösterilen {filteredBlogs.length} blog
-            </div>
-          </div>
+          {/* Filters */}
+          <BlogFilters
+            searchTerm={searchTerm}
+            selectedCategory={selectedCategory}
+            blogs={blogs}
+            filteredBlogs={filteredBlogs}
+            onSearchChange={setSearchTerm}
+            onCategoryChange={setSelectedCategory}
+            getUniqueCategories={getUniqueCategories}
+          />
         </div>
 
-        {/* Blog Listesi - Tablo Formatı */}
+        {/* Blog List */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : filteredBlogs.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
-            <div className="text-gray-400 text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {searchTerm || selectedCategory !== "all" ? "Arama sonucu bulunamadı" : "Henüz blog yazısı yok"}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {searchTerm || selectedCategory !== "all" 
-                ? "Farklı arama kriterleri ile tekrar deneyin" 
-                : "İlk blog yazınızı oluşturmak için yeni blog butonuna tıklayın"}
-            </p>
-            <button 
-              onClick={() => window.location.href = "/admin/addBlog"}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto transition-colors"
-            >
-              <FaPlus className="w-4 h-4" />
-              İlk Blogunuzu Oluşturun
-            </button>
-          </div>
+          <EmptyState 
+            searchTerm={searchTerm} 
+            selectedCategory={selectedCategory} 
+          />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Blog
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Kategori
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Yazar
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tarih
-                    </th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      İşlemler
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredBlogs.map((blog) => (
-                    <tr key={blog._id} className="hover:bg-gray-50 transition-colors">
-                      {/* Blog Bilgisi */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-16 w-16 mr-4">
-                            <img 
-                              src={blog.image} 
-                              alt={blog.title}
-                              className="h-16 w-16 rounded-lg object-cover border"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate max-w-xs">
-                              {blog.title}
-                            </p>
-                            <p className="text-sm text-gray-500 truncate max-w-xs mt-1">
-                              {blog.content.length > 60 
-                                ? blog.content.substring(0, 60) + "..." 
-                                : blog.content}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Kategori */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {typeof blog.category === 'object' && blog.category !== null ? blog.category.name : blog.category}
-                        </span>
-                      </td>
-
-                      {/* Yazar */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div className="flex items-center">
-                          <span className="text-gray-400 mr-2">👤</span>
-                            {typeof blog.author === 'object' && blog.author !== null ? blog.author.name : blog.author}
-                        </div>
-                      </td>
-
-                      {/* Tarih */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div>
-                          <div>{new Date(blog.date).toLocaleDateString('tr-TR')}</div>
-                          <div className="text-xs text-gray-400">
-                            {new Date(blog.date).toLocaleTimeString('tr-TR', { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* İşlemler */}
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center space-x-2">
-                          {/* Görüntüle */}
-                          <button 
-                            onClick={() => openViewModal(blog)}
-                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                            title="Görüntüle"
-                          >
-                            <FaEye className="w-3 h-3 mr-1" />
-                            Görüntüle
-                          </button>
-
-                          {/* Düzenle */}
-                          <button 
-                            onClick={() => openEditModal(blog)}
-                            className="inline-flex items-center px-3 py-1.5 border border-green-300 text-xs font-medium rounded-md text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                            title="Düzenle"
-                          >
-                            <FaEdit className="w-3 h-3 mr-1" />
-                            Düzenle
-                          </button>
-
-                          {/* Sil */}
-                          <button 
-                            onClick={() => openDeleteModal(blog)}
-                            className="inline-flex items-center px-3 py-1.5 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                            title="Sil"
-                          >
-                            <FaTrash className="w-3 h-3 mr-1" />
-                            Sil
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination (gelecekte eklenebilir) */}
-            <div className="bg-white px-6 py-3 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
-                  Toplam <span className="font-medium">{filteredBlogs.length}</span> blog gösteriliyor
-                </div>
-                <div className="text-sm text-gray-500">
-                  {blogs.length} toplam blog
-                </div>
-              </div>
-            </div>
-          </div>
+          <BlogTable
+            blogs={filteredBlogs}
+            onView={openViewModal}
+            onEdit={openEditModal}
+            onDelete={openDeleteModal}
+          />
         )}
       </div>
 
-      {/* Görüntüle Modal */}
-      {viewModal && selectedBlog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Blog Önizleme</h2>
-              <button 
-                onClick={closeModals}
-                className="text-gray-400 hover:text-gray-600 text-xl"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="p-6">
-              <img 
-                src={selectedBlog.image} 
-                alt={selectedBlog.title}
-                className="w-full h-64 object-cover rounded-lg mb-6"
-              />
-              <div className="mb-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  {typeof selectedBlog.category === 'object' && selectedBlog.category !== null ? selectedBlog.category.name : selectedBlog.category}
-                </span>
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{selectedBlog.title}</h1>
-              <div className="flex items-center text-sm text-gray-500 mb-6">
-                <span className="mr-4">👤 {typeof selectedBlog.author === 'object' && selectedBlog.author !== null ? selectedBlog.author.name : selectedBlog.author}</span>
-                <span>{new Date(selectedBlog.date).toLocaleDateString('tr-TR')}</span>
-              </div>
-              <div className="prose prose-lg max-w-none">
-                <ReactMarkdown
-                            components={{
-                              h1: ({ node, ...props }) => (
-                                <h1 className="text-4xl font-bold text-gray-900 mb-6 mt-8 border-b-2 border-gray-200 pb-3" {...props} />
-                              ),
-                              h2: ({ node, ...props }) => (
-                                <h2 className="text-3xl font-semibold text-gray-800 mb-4 mt-6 border-l-4 border-blue-500 pl-4" {...props} />
-                              ),
-                              h3: ({ node, ...props }) => (
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-3 mt-5" {...props} />
-                              ),
-                              h4: ({ node, ...props }) => (
-                                <h4 className="text-xl font-medium text-gray-700 mb-2 mt-4" {...props} />
-                              ),
-                              p: ({ node, ...props }) => (
-                                <p className="text-gray-700 leading-relaxed mb-4 text-lg" {...props} />
-                              ),
-                              a: ({ node, ...props }) => (
-                                <a
-                                  className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 hover:decoration-blue-800 transition-colors duration-200"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  {...props}
-                                />
-                              ),
-                              ul: ({ node, ...props }) => (
-                                <ul className="list-none space-y-2 mb-6 pl-4" {...props} />
-                              ),
-                              ol: ({ node, ...props }) => (
-                                <ol className="list-decimal list-inside space-y-2 mb-6 pl-4" {...props} />
-                              ),
-                              li: ({ node, ...props }) => (
-                                <li className="relative text-gray-700 pl-6 before:content-['•'] before:absolute before:left-0 before:text-blue-500 before:font-bold" {...props} />
-                              ),
-                              img: ({ node, ...props }) => (
-                                <img className="w-full rounded-xl shadow-lg my-6 hover:shadow-xl transition-shadow duration-300" {...props} />
-                              ),
-                              blockquote: ({ node, ...props }) => (
-                                <blockquote className="border-l-4 border-blue-500 bg-blue-50 p-4 my-6 italic text-gray-700 rounded-r-lg" {...props} />
-                              ),
-                              code: ({ node, ...props }) => (
-                                <code className="bg-gray-100 text-red-600 px-2 py-1 rounded text-sm font-mono" {...props} />
-                              ),
-                              pre: ({ node, ...props }) => (
-                                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 shadow-lg" {...props} />
-                              ),
-                              table: ({ node, ...props }) => (
-                                <table className="w-full border-collapse border border-gray-300 my-6 shadow-sm rounded-lg overflow-hidden" {...props} />
-                              ),
-                              th: ({ node, ...props }) => (
-                                <th className="border border-gray-300 bg-gray-100 px-4 py-2 text-left font-semibold" {...props} />
-                              ),
-                              td: ({ node, ...props }) => (
-                                <td className="border border-gray-300 px-4 py-2" {...props} />
-                              ),
-                              hr: ({ node, ...props }) => (
-                                <hr className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" {...props} />
-                              ),
-                            }}
-                          >
-                            {selectedBlog.content}
-                          </ReactMarkdown>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modals */}
+      <ViewBlogModal
+        isOpen={viewModal}
+        blog={selectedBlog}
+        onClose={closeModals}
+      />
 
-      {/* Düzenle Modal */}
-      {editModal && selectedBlog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Blog Düzenle</h2>
-              <button 
-                onClick={closeModals}
-                className="text-gray-400 hover:text-gray-600 text-xl"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="p-6">
-              <form onSubmit={(e) => { e.preventDefault(); updateBlog(); }} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Başlık
-                  </label>
-                  <input
-                    type="text"
-                    value={editForm.title}
-                    onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Açıklama
-                  </label>
-                  <textarea
-                    value={editForm.content}
-                    onChange={(e) => setEditForm({...editForm, content: e.target.value})}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
+      <EditBlogModal
+        isOpen={editModal}
+        blog={selectedBlog}
+        onClose={closeModals}
+        onSave={updateBlog}
+      />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Kategori
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.category}
-                      onChange={(e) => setEditForm({...editForm, category: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Yazar
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.author}
-                      onChange={(e) => setEditForm({...editForm, author: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-4 pt-6 border-t">
-                  <button
-                    type="button"
-                    onClick={closeModals}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    İptal
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                  >
-                    <FaSave className="w-4 h-4" />
-                    Kaydet
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Silme Onay Modal */}
-      {deleteModal && selectedBlog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                  <FaTrash className="h-6 w-6 text-red-600" />
-                </div>
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Blog Yazısını Sil
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  &quot;<strong>{selectedBlog.title}</strong>&quot; başlıklı blog yazısını silmek istediğinizden emin misiniz? 
-                  Bu işlem geri alınamaz.
-                </p>
-              </div>
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={closeModals}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  İptal
-                </button>
-                <button
-                  onClick={deleteBlog}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-                >
-                  <FaTrash className="w-4 h-4" />
-                  Sil
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteBlogModal
+        isOpen={deleteModal}
+        blog={selectedBlog}
+        onClose={closeModals}
+        onConfirm={deleteBlog}
+      />
     </>
-  )
-}
+  );
+};
 
-export default BlogListPage
+export default BlogListPage;

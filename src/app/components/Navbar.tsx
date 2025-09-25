@@ -11,7 +11,7 @@ export default function Navbar({ borel }: NavbarProps) {
   const { data: session, status } = useSession();
 
   return (
-    <nav className="flex items-center justify-between py-4 mb-8 border-gray-200">
+    <nav className="flex items-center justify-between pt-4 mb-8 border-gray-200">
       <div className="font-bold text-xl">
         <Link href="/" className={borel.className}>
           emrhn

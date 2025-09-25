@@ -17,7 +17,7 @@ export default function AboutPage() {
               JavaScript, React, and modern technologies.
             </p>
             <p className="text-gray-700">
-              If you'd like to get in touch with me, feel free to reach out via my
+              If you{"'"}d like to get in touch with me, feel free to reach out via my
               social media accounts or email.
             </p>
           </div>

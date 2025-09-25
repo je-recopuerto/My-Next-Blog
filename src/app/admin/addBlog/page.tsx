@@ -37,13 +37,13 @@ const AddBlogPage = () => {
       if (data.success) {
         setCategories(data.categories);
       } else {
-        console.error('Kategoriler yüklenemedi:', data.message);
-        // Eğer kategoriler yoksa, seed endpoint'ini çağır
+        console.error('Failed to load categories:', data.message);
+        // If categories are missing, call the seed endpoint
         await seedCategories();
       }
     } catch (error) {
-      console.error('Kategoriler yükleme hatası:', error);
-      // Eğer kategoriler yoksa, seed endpoint'ini çağır
+      console.error('Error loading categories:', error);
+      // If categories are missing, call the seed endpoint
       await seedCategories();
     } finally {
       setCategoriesLoading(false);
@@ -61,7 +61,7 @@ const AddBlogPage = () => {
         setCategories(data.categories);
       }
     } catch (error) {
-      console.error('Kategori seed hatası:', error);
+      console.error('Category seed error:', error);
     }
   };
 
@@ -77,7 +77,7 @@ const AddBlogPage = () => {
     e.preventDefault();
     
     if (!image) {
-      alert("Lütfen bir resim seçin!");
+      alert("Please select an image!");
       return;
     }
 
@@ -98,8 +98,8 @@ const AddBlogPage = () => {
       const data = await response.json();
 
       if (data.success) {
-        alert("Blog başarıyla oluşturuldu!");
-        // Formu temizle
+        alert("Blog created successfully!");
+        // Clear the form
         setFormData({
           title: "",
           content: "",
@@ -108,14 +108,14 @@ const AddBlogPage = () => {
         });
         setImage(null);
         setImagePreview("");
-        // Blog listesine yönlendir
+        // Redirect to the blog list
         window.location.href = "/admin/blogList";
       } else {
-        alert(data.message || "Blog oluşturulurken hata oluştu!");
+        alert(data.message || "An error occurred while creating the blog!");
       }
     } catch (error) {
-      console.error('Blog oluşturma hatası:', error);
-      alert("Blog oluşturulurken bir hata oluştu!");
+      console.error('Error creating blog:', error);
+      alert("An error occurred while creating the blog!");
     } finally {
       setLoading(false);
     }
@@ -127,8 +127,8 @@ const AddBlogPage = () => {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Yeni Blog Yazısı</h1>
-            <p className="text-gray-600 mt-2">Yeni bir blog yazısı oluşturun</p>
+            <h1 className="text-3xl font-bold text-gray-900">New Blog Post</h1>
+            <p className="text-gray-600 mt-2">Create a new blog post</p>
           </div>
 
           <AddBlogForm
