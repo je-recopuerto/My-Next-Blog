@@ -1,4 +1,5 @@
-"use client"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { FaUser, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";

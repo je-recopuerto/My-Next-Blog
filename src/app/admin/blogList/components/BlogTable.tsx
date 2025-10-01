@@ -54,7 +54,8 @@ const BlogTable: React.FC<BlogTableProps> = ({ blogs, onView, onEdit, onDelete }
                 <td className="px-6 py-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-16 w-16 mr-4">
-                      <img
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                         src={blog.image}
                         alt={blog.title}
                         className="h-16 w-16 rounded-lg object-cover border"

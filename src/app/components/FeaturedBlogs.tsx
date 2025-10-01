@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -81,13 +82,13 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {[...Array(limit)].map((_, index) => (
+      <div className=" gap-8">
+        {/* {[...Array(limit)].map((_, index) => (
           <div
             key={index}
             className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse"
           >
-            <div className="w-full h-64 bg-gray-300"></div>
+            <div className="w-full h-32 flex bg-gray-300"></div>
             <div className="p-6">
               <div className="h-4 bg-gray-300 rounded mb-2"></div>
               <div className="h-4 bg-gray-300 rounded mb-4 w-3/4"></div>
@@ -99,7 +100,7 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
               </div>
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
     );
   }
@@ -134,18 +135,19 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
         {displayedBlogs.map((blog) => (
           <div
             key={blog._id}
-            className="flex rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            onClick={() => (window.location.href = `/blog/${blog.slug}`)}
+            className="flex rounded-xl overflow-hidden hover:shadow-xl p-2 cursor-pointer transition-shadow duration-300"
           >
-            <div className="overflow-hidden group rounded-2xl">
+            <div className="group rounded-2xl">
               <Image
                 width={900}
-                height={450}
+                height={900}
                 src={optimizeImageUrl(blog.image)}
                 alt={blog.title}
                 className="w-32 h-32 object-cover rounded-2xl group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="py-6 px-4 flex flex-col">
+            <div className=" px-4 flex flex-col">
               <span className="text-gray-500 text-sm w-full font-medium">
                 {new Intl.DateTimeFormat("en-EN", {
                   day: "numeric",
@@ -160,30 +162,6 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
           </div>
         ))}
       </div>
-
-      {/* Load More Button */}
-      {showLoadMore && displayCount < blogs.length && (
-        <div className="text-center mt-12">
-          <button
-            onClick={handleLoadMore}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Daha Fazla Yükle ({blogs.length - displayCount} kaldı)
-          </button>
-        </div>
-      )}
-
-      {/* View All Button */}
-      {!showLoadMore && blogs.length > limit && (
-        <div className="text-center mt-12">
-          <Link
-            href="/blog"
-            className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-block"
-          >
-            Tüm Blogları Görüntüle ({blogs.length} yazı)
-          </Link>
-        </div>
-      )}
     </div>
   );
 };

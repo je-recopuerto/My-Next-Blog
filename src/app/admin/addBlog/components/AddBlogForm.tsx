@@ -1,6 +1,7 @@
 "use client";
-import { FaSave, FaTimes } from "react-icons/fa";
+import { FaSave, FaTimes, FaMagic } from "react-icons/fa";
 import ImageUpload from "./ImageUpload";
+import { useState } from "react";
 
 interface Category {
   _id: string;
@@ -36,6 +37,7 @@ interface AddBlogFormProps {
 
 const AddBlogForm: React.FC<AddBlogFormProps> = ({
   formData,
+  setFormData,
   image,
   setImage,
   imagePreview,
@@ -46,6 +48,55 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
   handleSubmit,
   handleInputChange,
 }) => {
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const generateContent = async () => {
+    console.log("formData ==> ", formData);
+    
+    if (!formData.title || !formData.category) {
+      alert('Lütfen önce başlık ve kategori seçin!');
+      return;
+    }
+
+    // Category ID'sini category adına çevir
+    const selectedCategory = categories.find(cat => cat._id === formData.category);
+    const categoryName = selectedCategory ? selectedCategory.name : formData.category;
+
+    console.log("Selected category:", selectedCategory);
+    console.log("Category name:", categoryName);
+  
+    setAiLoading(true);
+    try {
+      const response = await fetch('/api/ai/generate-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          category: categoryName,
+          summary: formData.summary,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormData(prev => ({
+          ...prev,
+          content: data.content
+        }));
+        alert('İçerik başarıyla oluşturuldu!');
+      } else {
+        alert(data.message || 'İçerik oluşturulurken hata oluştu');
+      }
+    } catch (error) {
+      console.error('AI Content Generation Error:', error);
+      alert('İçerik oluşturulurken hata oluştu');
+    } finally {
+      setAiLoading(false);
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow-sm border">
       <form onSubmit={handleSubmit} className="p-8">
@@ -119,18 +170,35 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
         </div>
 
         <div className="mt-8">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Blog Content *
-          </label>
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Blog Content *
+            </label>
+            <button
+              type="button"
+              onClick={generateContent}
+              disabled={aiLoading || !formData.title || !formData.category}
+              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              <FaMagic className="w-4 h-4" />
+              {aiLoading ? 'AI Creating...' : 'Use AI for Content'}
+            </button>
+          </div>
           <textarea
             name="content"
             value={formData.content}
             onChange={handleInputChange}
-            rows={10}
+            rows={12}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Write blog content here... (Markdown supported)"
+            placeholder="Write blog content here... (Markdown supported) or use AI to generate content"
             required
           />
+          {aiLoading && (
+            <div className="mt-2 text-sm text-purple-600 flex items-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+              AI is generating content based on your title, category, and summary...
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">

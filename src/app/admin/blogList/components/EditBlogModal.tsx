@@ -1,6 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaTimes, FaSave } from "react-icons/fa";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FaTimes, FaSave, FaImage } from "react-icons/fa";
+import ImageUpload from "../../addBlog/components/ImageUpload";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
 
 interface Blog {
   _id: string;
@@ -19,6 +27,8 @@ interface EditForm {
   content: string;
   category: string;
   author: string;
+  image?: File | null;
+  currentImage?: string;
 }
 
 interface EditBlogModalProps {
@@ -34,7 +44,10 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ isOpen, blog, onClose, on
     content: "",
     category: "",
     author: "",
+    currentImage: "",
   });
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
     if (blog) {
@@ -49,31 +62,33 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ isOpen, blog, onClose, on
           typeof blog.author === "object" && blog.author !== null
             ? blog.author._id
             : blog.author,
+        currentImage: blog.image,
       });
+      setImagePreview(blog.image); // Mevcut görseli preview olarak göster
+      setImage(null); // Yeni görsel seçilmedi
     }
   }, [blog]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(editForm);
+    const formDataToSend = {
+      ...editForm,
+      image: image, // Yeni görsel seçildiyse gönder
+    };
+    onSave(formDataToSend);
   };
 
   if (!isOpen || !blog) return null;
 
   return (
-    
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Edit Blog</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl"
-          >
-            <FaTimes />
-          </button>
-        </div>
-        <div className="p-6">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-gray-900">
+            Edit Blog
+          </DialogTitle>
+        </DialogHeader>
+        <div className="mt-4">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -103,6 +118,23 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ isOpen, blog, onClose, on
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Blog Image
+              </label>
+              <ImageUpload
+                image={image}
+                setImage={setImage}
+                imagePreview={imagePreview}
+                setImagePreview={setImagePreview}
+              />
+              {editForm.currentImage && !image && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Current image will be kept if no new image is selected
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -155,8 +187,8 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ isOpen, blog, onClose, on
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

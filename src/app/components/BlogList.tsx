@@ -26,7 +26,10 @@ interface BlogListProps {
   showLoadMore?: boolean;
 }
 
-const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) => {
+const BlogList: React.FC<BlogListProps> = ({
+  limit = 6,
+  showLoadMore = false,
+}) => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,13 +37,13 @@ const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) 
 
   const optimizeImageUrl = (url: string) => {
     if (!url) return "";
-    
+
     // Cloudinary URL'sine optimizasyon parametreleri ekle
     const optimizedUrl = url.replace(
       "/upload/",
-      "/upload/w_400,h_250,q_80,f_auto,c_fill/"
+      "/upload/w_800,h_800,q_auto:good,f_auto,c_fill/"
     );
-    
+
     return optimizedUrl;
   };
 
@@ -73,14 +76,17 @@ const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) 
   };
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => prev + limit);
+    setDisplayCount((prev) => prev + limit);
   };
 
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(limit)].map((_, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+          <div
+            key={index}
+            className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse"
+          >
             <div className="w-full h-64 bg-gray-300"></div>
             <div className="p-6">
               <div className="h-4 bg-gray-300 rounded mb-2"></div>
@@ -102,7 +108,7 @@ const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) 
     return (
       <div className="text-center py-12">
         <p className="text-red-500 text-lg mb-4">{error}</p>
-        <button 
+        <button
           onClick={fetchBlogs}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
         >
@@ -126,43 +132,45 @@ const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) 
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayedBlogs.map((blog) => (
-          <Card key={blog._id} className="bg-white relative rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+          <Card
+            key={blog._id}
+            onClick={() => (window.location.href = `/blog/${blog.slug}`)}
+            className="bg-white relative group rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-300"
+          >
             <CardContent className="p-0">
-            <div className="overflow-hidden group">
-              <Image
-                width={900}
-                height={450}
-                src={optimizeImageUrl(blog.image)}
-                alt={blog.title}
-                className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute top-4 left-4">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  {blog.category?.name || "Uncategorized"}
-                </span>
+              <div className="overflow-hidden ">
+                <Image
+                  width={1920}
+                  height={1080}
+                  src={optimizeImageUrl(blog.image)}
+                  alt={blog.title}
+                  className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {blog.category?.name || "Uncategorized"}
+                  </span>
+                </div>
               </div>
-            </div>
-            
-            <div className="p-6 absolute bottom-0 bg-gradient-to-t from-white/90 to-white/0 w-full">
-              <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
-                <Link href={`/blog/${blog.slug}`}>
-                  {blog.title}
-                </Link>
-              </h3>
-              
-              <p className="text-gray-600 mb-4 line-clamp-3">
-                {truncateContent(blog.content.replace(/[#*`_\[\]]/g, ""))}
-              </p>
-            </div>
+
+              <div className="p-6 absolute bottom-0 bg-gradient-to-t from-black/90 to-white/0 w-full text-white">
+                <h3 className="text-xl font-bold mb-3 line-clamp-2 transition-colors">
+                  <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
+                </h3>
+
+                <p className=" mb-4 line-clamp-3">
+                  {truncateContent(blog.content.replace(/[#*`_\[\]]/g, ""))}
+                </p>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
-      
+
       {/* Load More Button */}
       {showLoadMore && displayCount < blogs.length && (
         <div className="text-center mt-12">
-          <button 
+          <button
             onClick={handleLoadMore}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
@@ -170,11 +178,11 @@ const BlogList: React.FC<BlogListProps> = ({ limit = 6, showLoadMore = false }) 
           </button>
         </div>
       )}
-      
+
       {/* View All Button */}
       {!showLoadMore && blogs.length > limit && (
         <div className="text-center mt-12">
-          <Link 
+          <Link
             href="/blog"
             className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-block"
           >

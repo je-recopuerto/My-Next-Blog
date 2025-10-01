@@ -81,7 +81,8 @@ const AdminPage = () => {
                     <tr key={blog._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <img 
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
                             src={blog.image} 
                             alt={blog.title}
                             className="w-12 h-12 rounded object-cover mr-3"

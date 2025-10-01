@@ -25,6 +25,8 @@ interface EditForm {
   content: string;
   category: string;
   author: string;
+  image?: File | null;
+  currentImage?: string;
 }
 
 const BlogListPage = () => {
@@ -46,6 +48,7 @@ const BlogListPage = () => {
 
   useEffect(() => {
     filterBlogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blogs, searchTerm, selectedCategory]);
 
   const fetchBlogs = async () => {
@@ -122,13 +125,36 @@ const BlogListPage = () => {
     if (!selectedBlog) return;
 
     try {
-      const response = await fetch(`/api/blog/${selectedBlog._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editForm),
-      });
+      let response;
+      
+      // Eğer yeni görsel seçildiyse FormData kullan
+      if (editForm.image && editForm.image instanceof File) {
+        const formData = new FormData();
+        formData.append("title", editForm.title);
+        formData.append("content", editForm.content);
+        formData.append("category", editForm.category);
+        formData.append("author", editForm.author);
+        formData.append("image", editForm.image);
+
+        response = await fetch(`/api/blog/${selectedBlog._id}`, {
+          method: "PUT",
+          body: formData,
+        });
+      } else {
+        // Görsel yoksa JSON kullan
+        response = await fetch(`/api/blog/${selectedBlog._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: editForm.title,
+            content: editForm.content,
+            category: editForm.category,
+            author: editForm.author,
+          }),
+        });
+      }
 
       const data = await response.json();
 
@@ -136,7 +162,7 @@ const BlogListPage = () => {
         // Update the list
         setBlogs(
           blogs.map((blog) =>
-            blog._id === selectedBlog._id ? { ...blog, ...editForm } : blog
+            blog._id === selectedBlog._id ? { ...blog, ...data.blog } : blog
           )
         );
         closeModals();

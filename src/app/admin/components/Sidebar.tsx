@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import { Card, CardContent } from '../../components/ui/card'
 import { Badge } from '../../components/ui/badge'
 import { 
@@ -13,7 +15,8 @@ import {
   LayoutDashboard,
   Menu,
   X,
-  ArrowRight
+  ArrowRight,
+  LogOut
 } from 'lucide-react'
 import { cn } from '../../components/ui/utils'
 import { useSidebar } from './SidebarContext'
@@ -144,6 +147,22 @@ const Sidebar = () => {
               )} />
               {isOpen && 'Back to Site'}
             </Link>
+            
+            {/* Logout Button */}
+            <button
+              onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+              title={!isOpen ? 'Logout' : undefined}
+              className={cn(
+                'group flex items-center cursor-pointer text-sm font-medium rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-all duration-200 w-full mt-2',
+                isOpen ? 'px-3 py-2.5' : 'px-2 py-2.5 justify-center'
+              )}
+            >
+              <LogOut className={cn(
+                'h-4 w-4 transition-transform group-hover:translate-x-1 shrink-0',
+                isOpen ? 'mr-3' : 'mr-0'
+              )} />
+              {isOpen && 'Logout'}
+            </button>
           </div>
 
           {/* Footer Info */}

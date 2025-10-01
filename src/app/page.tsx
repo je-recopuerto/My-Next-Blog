@@ -39,15 +39,25 @@ export default function Home() {
       </section>
 
       {/* Blog List Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Latest Articles
-            </h2>
-            <p className="text-xl text-gray-600">
-              Discover my latest thoughts and insights
-            </p>
+      <section className="py-16">
+        <div className="mx-auto px-4">
+          <div className="grid grid-cols-12 mb-12">
+            <div className="col-span-9 mr-2">
+              <div className="flex">
+                <h2 className="text-2xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
+                  Some blogs are remarkable.
+                </h2>
+                <div className="h-1 bg-gray-300 items-center align-middle opacity-25 rounded-2xl w-full my-4"></div>
+              </div>
+            </div>
+            <div className="col-span-3">
+              <div className="flex">
+                <h2 className="text-xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
+                  Featured
+                </h2>
+                <div className="h-1 bg-gray-300 opacity-25 rounded-2xl w-full my-4"></div>
+              </div>
+            </div>
           </div>
           {/* Blog List Component will go here */}
           <div className="grid grid-cols-12">

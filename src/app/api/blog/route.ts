@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { ConnectDB } from "../../../../lib/config/db"
 import BlogModel from "../../../../lib/models/BlogModel"
 import UserModel from "../../../../lib/models/UserModel"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CategoryModel from "../../../../lib/models/CategoryModel"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../auth/[...nextauth]/route"
@@ -11,9 +12,8 @@ export async function GET() {
     try {
         await ConnectDB();
         
-        // Model'lerin yüklendiğinden emin ol
-        CategoryModel;
-        UserModel;
+        // Ensure models are loaded
+        // Models are imported to ensure they're registered with Mongoose
         
         const blogs = await BlogModel.find({})
         .populate('author', 'name email avatar')

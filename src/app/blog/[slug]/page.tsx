@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import { notFound } from "next/navigation";
 import MainLayout from "../../components/MainLayout";
-import Image from "next/image";
+import BlogImage from "./components/BlogImage";
 
 interface BlogParams {
   params: Promise<{ slug: string }>;
@@ -46,17 +46,6 @@ async function getBlogPost(slug: string): Promise<Post | null> {
     return null;
   }
 }
-  const optimizeImageUrl = (url: string) => {
-    if (!url) return "";
-
-    // Cloudinary URL'sine daha yüksek kalite ve genişlik parametreleri ekle
-    const optimizedUrl = url.replace(
-      "/upload/",
-      "/upload/w_800,h_400,q_80,f_auto,e_sharpen/"
-    );
-
-    return optimizedUrl;
-  };
 
 export default async function BlogDetailPage({ params }: BlogParams) {
   const { slug } = await params;
@@ -67,13 +56,10 @@ export default async function BlogDetailPage({ params }: BlogParams) {
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto py-8">
-        <Image
-          width={800}
-          height={400}
-          src={optimizeImageUrl(post.image) || "/blog/asset1.jpg"}
+        <BlogImage
+          src={post.image}
           alt={post.title}
           className="w-full object-cover rounded-lg mb-6"
-          unoptimized
         />
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
         <div className="prose prose-lg max-w-none mb-6">
@@ -112,6 +98,7 @@ export default async function BlogDetailPage({ params }: BlogParams) {
                 <li className="relative text-gray-700 pl-6 before:content-['•'] before:absolute before:left-0 before:text-blue-500 before:font-bold" {...props} />
               ),
               img: (props) => (
+                // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
                 <img className="w-full rounded-xl shadow-lg my-6 hover:shadow-xl transition-shadow duration-300" {...props} />
               ),
               blockquote: (props) => (

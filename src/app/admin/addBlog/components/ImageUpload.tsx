@@ -1,5 +1,6 @@
 "use client";
 import { FaUpload } from "react-icons/fa";
+import Image from "next/image";
 
 interface ImageUploadProps {
   image: File | null;
@@ -29,9 +30,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ setImage, imagePreview, setIm
       <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
         {imagePreview ? (
           <div className="space-y-4">
-            <img 
+            <Image 
               src={imagePreview} 
               alt="Preview" 
+              width={900} 
+              height={400} 
               className="mx-auto h-48 w-full object-cover rounded-lg"
             />
             <button

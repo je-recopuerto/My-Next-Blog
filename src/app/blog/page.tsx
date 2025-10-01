@@ -88,7 +88,7 @@ const BlogPage = () => {
               <span className="text-sm text-gray-600 font-medium">Active filters:</span>
               {searchTerm && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                  Search: "{searchTerm}"
+                  Search: &quot;{searchTerm}&quot;
                   <button 
                     onClick={() => setSearchTerm("")}
                     className="ml-1 hover:text-blue-600"
