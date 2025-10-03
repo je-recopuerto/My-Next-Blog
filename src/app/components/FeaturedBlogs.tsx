@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "./ui/card";
+import { optimizeImage } from "../utils/optimizeImage";
 
 interface Blog {
   _id: string;
@@ -20,6 +21,7 @@ interface Blog {
     name: string;
     slug: string;
   };
+  optimizedImage?: string; // Add this field for optimized image URL
 }
 
 interface BlogListProps {
@@ -35,18 +37,6 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [displayCount, setDisplayCount] = useState(limit);
-
-  const optimizeImageUrl = (url: string) => {
-    if (!url) return "";
-
-    // Cloudinary URL'sine optimizasyon parametreleri ekle
-    const optimizedUrl = url.replace(
-      "/upload/",
-      "/upload/w_400,h_250,q_80,f_auto,c_fill/"
-    );
-
-    return optimizedUrl;
-  };
 
   const truncateContent = (content: string, limit: number = 150) => {
     if (content.length <= limit) return content;
@@ -64,7 +54,12 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
       const data = await response.json();
 
       if (data.success) {
-        setBlogs(data.blogs);
+        // Pre-calculate optimized image URLs
+        const blogsWithOptimizedImages = data.blogs.map((blog: Blog) => ({
+          ...blog,
+          optimizedImage: optimizeImage(blog.image)
+        }));
+        setBlogs(blogsWithOptimizedImages);
       } else {
         setError("Blogları yüklerken bir hata oluştu");
       }
@@ -138,16 +133,16 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
             onClick={() => (window.location.href = `/blog/${blog.slug}`)}
             className="flex rounded-xl overflow-hidden hover:shadow-xl p-2 cursor-pointer transition-shadow duration-300"
           >
-            <div className="group rounded-2xl">
+            <div className="group rounded-2xl flex-shrink-0">
               <Image
                 width={900}
                 height={900}
-                src={optimizeImageUrl(blog.image)}
+                src={blog.optimizedImage || "/blog/asset1.jpg"}
                 alt={blog.title}
                 className="w-32 h-32 object-cover rounded-2xl group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className=" px-4 flex flex-col">
+            <div className="px-4 flex flex-col flex-grow min-w-0">
               <span className="text-gray-500 text-sm w-full font-medium">
                 {new Intl.DateTimeFormat("en-EN", {
                   day: "numeric",
@@ -155,7 +150,7 @@ const FeaturedBlogs: React.FC<BlogListProps> = ({
                   year: "numeric",
                 }).format(new Date(blog.date))}
               </span>
-              <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
+              <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-4 hover:text-blue-600 transition-colors">
                 <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
               </h3>
             </div>

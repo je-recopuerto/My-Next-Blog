@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { optimizeImage } from "../../utils/optimizeImage";
 
 interface BlogItemProps {
   searchTerm?: string;
@@ -32,6 +33,7 @@ const BlogItem = ({ searchTerm = "", selectedCategory = "" }: BlogItemProps) => 
     };
     image: string;
     date: string;
+    optimizedImage?: string; // Add this field for optimized image URL
   }
 
   const fetchBlogs = async () => {
@@ -39,7 +41,12 @@ const BlogItem = ({ searchTerm = "", selectedCategory = "" }: BlogItemProps) => 
       const response = await fetch("/api/blog");
       const data = await response.json();
       if (data.success) {
-        setBlogs(data.blogs);
+        // Pre-calculate optimized image URLs
+        const blogsWithOptimizedImages = data.blogs.map((blog: Blog) => ({
+          ...blog,
+          optimizedImage: optimizeImage(blog.image) || "/blog/asset1.jpg"
+        }));
+        setBlogs(blogsWithOptimizedImages);
       }
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -48,6 +55,7 @@ const BlogItem = ({ searchTerm = "", selectedCategory = "" }: BlogItemProps) => 
 
   useEffect(() => {
     fetchBlogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter blogs based on search term and selected category
@@ -73,17 +81,6 @@ const BlogItem = ({ searchTerm = "", selectedCategory = "" }: BlogItemProps) => 
     setFilteredBlogs(filtered);
   }, [blogs, searchTerm, selectedCategory]);
 
-  const optimizeImageUrl = (url: string) => {
-    if (!url) return "";
-
-    // Cloudinary URL'sine daha yüksek kalite ve genişlik parametreleri ekle
-    const optimizedUrl = url.replace(
-      "/upload/",
-      "/upload/w_800,h_400,q_80,f_auto,e_sharpen/"
-    );
-
-    return optimizedUrl;
-  };
   return (
     <>
       {filteredBlogs.length === 0 && (searchTerm || selectedCategory) ? (
@@ -104,7 +101,7 @@ const BlogItem = ({ searchTerm = "", selectedCategory = "" }: BlogItemProps) => 
             <Image
               width={400}
               height={200}
-              src={optimizeImageUrl(item.image) || "/blog/asset1.jpg"}
+              src={item.optimizedImage || "/blog/asset1.jpg"}
               alt={item.title || "Blog image"}
               className="w-full h-48 object-cover rounded-t-lg"
             />

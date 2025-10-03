@@ -16,6 +16,9 @@ export default function AboutPage() {
               I especially enjoy sharing my experiences in web development,
               JavaScript, React, and modern technologies.
             </p>
+            <p className="text-black">
+              This website is under active development, and I{"'"}m always looking to improve it.
+            </p>
             <p className="text-gray-700">
               If you{"'"}d like to get in touch with me, feel free to reach out via my
               social media accounts or email.

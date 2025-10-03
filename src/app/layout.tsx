@@ -12,13 +12,12 @@ export const metadata: Metadata = {
     "author": "Emirhan Güngör",
     "viewport": "width=device-width, initial-scale=1",
     "robots": "index, follow",
-    // Schema.org structured data
     "application/ld+json": JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Blog",
       "name": "Emirhan's Blog",
       "description": "Personal blog about software, technology, education, and current topics.",
-      "url": "https://yourdomain.com"
+      "url": process.env.NEXTAUTH_URL || "http://localhost:3000"
     })
   }
 };
