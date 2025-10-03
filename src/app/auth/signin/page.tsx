@@ -3,6 +3,7 @@ import { signIn, getSession } from "next-auth/react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { FaGithub, FaLock, FaUser } from "react-icons/fa"
+import Footer from "../../components/Footer"
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false)
@@ -196,6 +197,7 @@ export default function SignInPage() {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

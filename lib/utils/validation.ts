@@ -6,13 +6,13 @@ export const validateEmail = (email: string): boolean => {
 
 export const validatePassword = (password: string): { isValid: boolean; message?: string } => {
   if (password.length < 8) {
-    return { isValid: false, message: "Şifre en az 8 karakter olmalıdır" };
+    return { isValid: false, message: "Password must be at least 8 characters long" };
   }
   
   if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
     return { 
       isValid: false, 
-      message: "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir" 
+      message: "Password must contain at least one uppercase letter, one lowercase letter, and one number" 
     };
   }
   

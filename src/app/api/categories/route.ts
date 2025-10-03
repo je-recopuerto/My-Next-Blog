@@ -38,7 +38,6 @@ export async function POST(request: Request) {
         
         const { name, description } = await request.json();
         
-        // Slug oluştur (Türkçe karakterleri değiştir)
         const slug = name
             .toLowerCase()
             .replace(/ğ/g, 'g')

@@ -8,7 +8,6 @@ A modern, full-featured blog content management system built with Next.js 15, Ty
 
 - **Modern Tech Stack**: Next.js 15 with Turbopack, TypeScript, Tailwind CSS
 - **Authentication**: NextAuth.js with GitHub OAuth and credentials
-- **Role-Based Access**: Owner, Writer, and Member roles with specific permissions
 - **Content Management**: Full CRUD operations for blogs and categories
 - **Image Upload**: Cloudinary integration for image hosting
 - **Responsive Design**: Mobile-first responsive design
@@ -75,6 +74,12 @@ NEXTAUTH_GITHUB_SECRET=your-github-client-secret
 CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
 CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+
+# Google Gemini AI API Key
+GEMINI_API_KEY=gemini_api_key
+
+# Use a powerful password
+OWNER_PASSWORD=random123
 ```
 
 ### 4. Database Setup
@@ -112,62 +117,6 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 8. Seed Initial Data (Optional)
-
-To populate the database with sample categories and users:
-
-```bash
-# Create initial categories
-curl -X POST http://localhost:3000/api/categories/seed
-
-# Create initial users (requires authentication)
-curl -X POST http://localhost:3000/api/users/seed
-```
-
-## 👥 User Roles & Permissions
-
-### Owner
-- Full access to all features
-- Can manage users, blogs, and categories
-- Access to admin dashboard
-
-### Writer
-- Can create, edit, and publish blogs
-- Access to admin dashboard
-- Cannot manage users
-
-### Member
-- Can view published blogs
-- No admin access
-
-## 📁 Project Structure
-
-```
-src/
-├── app/
-│   ├── admin/           # Admin dashboard
-│   │   ├── addBlog/     # Blog creation
-│   │   ├── blogList/    # Blog management
-│   │   ├── users/       # User management
-│   │   └── components/  # Admin components
-│   ├── api/             # API routes
-│   │   ├── auth/        # NextAuth configuration
-│   │   ├── blog/        # Blog CRUD operations
-│   │   ├── categories/  # Category management
-│   │   └── users/       # User management
-│   ├── auth/            # Authentication pages
-│   ├── blog/            # Public blog pages
-│   └── components/      # Shared components
-lib/
-├── config/              # Database & Cloudinary config
-├── models/              # Mongoose models
-└── utils/               # Utility functions
-```
-
-## 🔧 Configuration
-
 ### Database Models
 
 - **User**: Authentication, roles, permissions
@@ -190,14 +139,6 @@ lib/
 3. Add environment variables in Vercel dashboard
 4. Update `NEXTAUTH_URL` to your production domain
 
-### Other Platforms
-
-The app can be deployed to any platform that supports Node.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
-
 ## 🛡️ Security Features
 
 - Environment variable validation
@@ -215,39 +156,6 @@ The app can be deployed to any platform that supports Node.js:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 Environment Variables Reference
-
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `MONGODB_URI` | MongoDB connection string | Yes | `mongodb://localhost:27017/nextblog` |
-| `NEXTAUTH_URL` | Your app's URL | Yes | `http://localhost:3000` |
-| `NEXTAUTH_SECRET` | JWT secret (32+ chars) | Yes | `your-super-secret-key` |
-| `NEXTAUTH_GITHUB_ID` | GitHub OAuth Client ID | Yes | `github-client-id` |
-| `NEXTAUTH_GITHUB_SECRET` | GitHub OAuth Client Secret | Yes | `github-client-secret` |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes | `your-cloud-name` |
-| `CLOUDINARY_API_KEY` | Cloudinary API key | Yes | `your-api-key` |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes | `your-api-secret` |
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **MongoDB Connection Error**
-   - Check your MONGODB_URI format
-   - Ensure MongoDB is running (local) or accessible (Atlas)
-
-2. **GitHub OAuth Not Working**
-   - Verify callback URL matches exactly
-   - Check GitHub app settings
-
-3. **Image Upload Failing**
-   - Verify Cloudinary credentials
-   - Check image file size limits
-
-4. **Build Errors**
-   - Ensure all environment variables are set
-   - Check TypeScript errors: `npm run lint`
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -255,16 +163,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Emirhan Güngör**
-
-## 🙏 Acknowledgments
-
-- Next.js team for the amazing framework
-- Vercel for hosting and deployment tools
-- MongoDB for the database solution
-- Cloudinary for image management
-- All contributors and users of this project
-
----
 
 **Happy Blogging! 🎉**
 

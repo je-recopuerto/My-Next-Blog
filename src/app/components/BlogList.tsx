@@ -59,11 +59,11 @@ const BlogList: React.FC<BlogListProps> = ({
         }));
         setBlogs(dataWithOptimizedImages);
       } else {
-        setError("Blogları yüklerken bir hata oluştu");
+        setError("An error occurred while loading blogs");
       }
     } catch (error) {
       console.error("Blog fetch error:", error);
-      setError("Blogları yüklerken bir hata oluştu");
+      setError("An error occurred while loading blogs");
     } finally {
       setLoading(false);
     }
@@ -75,21 +75,24 @@ const BlogList: React.FC<BlogListProps> = ({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(limit)].map((_, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse"
+            className="bg-white relative group rounded-xl shadow-lg overflow-hidden animate-pulse"
           >
-            <div className="w-full h-64 bg-gray-300"></div>
-            <div className="p-6">
-              <div className="h-4 bg-gray-300 rounded mb-2"></div>
-              <div className="h-4 bg-gray-300 rounded mb-4 w-3/4"></div>
-              <div className="h-3 bg-gray-300 rounded mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded mb-4 w-5/6"></div>
-              <div className="flex items-center justify-between">
-                <div className="h-3 bg-gray-300 rounded w-1/4"></div>
-                <div className="h-3 bg-gray-300 rounded w-1/3"></div>
+            <div className="overflow-hidden">
+              <div className="w-full h-64 lg:h-96 bg-gray-300"></div>
+              <div className="absolute top-4 left-4">
+                <div className="bg-gray-400 h-6 w-20 rounded-full"></div>
+              </div>
+            </div>
+            <div className="p-6 absolute bottom-0 bg-gradient-to-t from-black/90 to-white/0 w-full">
+              <div className="h-6 bg-gray-400 rounded mb-3 w-3/4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-400 rounded w-full"></div>
+                <div className="h-4 bg-gray-400 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-400 rounded w-4/6"></div>
               </div>
             </div>
           </div>
@@ -106,7 +109,7 @@ const BlogList: React.FC<BlogListProps> = ({
           onClick={fetchBlogs}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
         >
-          Tekrar Dene
+          Try Again
         </button>
       </div>
     );
@@ -117,7 +120,7 @@ const BlogList: React.FC<BlogListProps> = ({
   if (blogs.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">Henüz blog yazısı bulunmuyor.</p>
+        <p className="text-gray-500 text-lg">No blog posts found yet.</p>
       </div>
     );
   }
@@ -168,7 +171,7 @@ const BlogList: React.FC<BlogListProps> = ({
             onClick={handleLoadMore}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
-            Daha Fazla Yükle ({blogs.length - displayCount} kaldı)
+            Load More ({blogs.length - displayCount} remaining)
           </button>
         </div>
       )}
@@ -180,7 +183,7 @@ const BlogList: React.FC<BlogListProps> = ({
             href="/blog"
             className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-block"
           >
-            Tüm Blogları Görüntüle ({blogs.length} yazı)
+            View All Blogs ({blogs.length} posts)
           </Link>
         </div>
       )}

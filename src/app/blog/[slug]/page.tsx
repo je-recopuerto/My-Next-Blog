@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { notFound } from "next/navigation";
 import MainLayout from "../../components/MainLayout";
 import BlogImage from "./components/BlogImage";
+import RelatedPosts from "./components/RelatedPosts";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -97,7 +98,7 @@ export async function generateMetadata({ params }: BlogParams): Promise<Metadata
       title: post.title,
       description: post.summary || post.content.slice(0, 160) + "...",
       images: [post.image],
-      creator: "@emrhngngr", // Twitter handle'ınızı buraya ekleyin
+      creator: "@justEmrhn",
     },
     other: {
       "article:author": post.author.name,
@@ -259,16 +260,19 @@ export default async function BlogDetailPage({ params }: BlogParams) {
         </div>
         <div className="text-sm text-gray-500 mb-4">
           <p>
-            <strong>Yayın Tarihi:</strong>{" "}
+            <strong>Publish Date:</strong>{" "}
             {new Date(post.date).toLocaleDateString()}
           </p>
           <p>
-            <strong>Kategori:</strong> {post.category.name}
+            <strong>Category:</strong> {post.category.name}
           </p>
           <p>
-            <strong>Yazar:</strong> {post.author.name}
+            <strong>Author:</strong> {post.author.name}
           </p>
         </div>
+
+        {/* Related Posts Section */}
+        <RelatedPosts currentSlug={post.slug} />
       </div>
     </MainLayout>
   );

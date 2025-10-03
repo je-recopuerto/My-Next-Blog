@@ -2,7 +2,7 @@ import MainLayout from "./components/MainLayout";
 import BlogList from "./components/BlogList";
 import Image from "next/image";
 import FeaturedBlogs from "./components/FeaturedBlogs";
-import handleSubscribeClick from "./components/SubscribeClick";
+// import handleSubscribeClick from "./components/SubscribeClick";
 
 export default function Home() {
   return (
@@ -27,7 +27,7 @@ export default function Home() {
             I share my articles, thoughts, and projects on my personal blog
             site.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
+          {/* <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
             <input
               type="email"
               placeholder="Enter your email for updates"
@@ -39,32 +39,30 @@ export default function Home() {
             >
               Subscribe
             </button>
-          </div>
+          </div> */}
         </div>
       </section>
 
       {/* Blog List Section */}
       <section className="py-16">
-        <div className="mx-auto px-4">
-          <div className="lg:grid grid-cols-12 mb-12 gap-4">
-            <div className="col-span-9">
-              <div className="flex">
-                <h2 className="text-2xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
-                  Some blogs are remarkable.
-                </h2>
-                <div className="h-1 bg-gray-300 items-center align-middle opacity-25 rounded-2xl w-full my-4"></div>
-              </div>
-              <BlogList limit={6} showLoadMore={false} />
+        <div className="grid lg:grid-cols-12 mb-12 gap-4">
+          <div className="lg:col-span-9">
+            <div className="flex">
+              <h2 className="text-2xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
+                Some blogs are remarkable.
+              </h2>
+              <div className="h-1 bg-gray-300 items-center align-middle opacity-25 rounded-2xl w-full my-4"></div>
             </div>
-            <div className="col-span-3">
-              <div className="flex mt-8 lg:mt-0">
-                <h2 className="text-xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
-                  Featured
-                </h2>
-                <div className="h-1 bg-gray-300 opacity-25 rounded-2xl w-full my-4"></div>
-              </div>
-              <FeaturedBlogs limit={3} />
+            <BlogList limit={6} showLoadMore={false} />
+          </div>
+            <div className="lg:col-span-3">
+            <div className="flex mt-8 lg:mt-0">
+              <h2 className="text-xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
+                Featured
+              </h2>
+              <div className="h-1 bg-gray-300 opacity-25 rounded-2xl w-full my-4"></div>
             </div>
+            <FeaturedBlogs limit={3} />
           </div>
         </div>
       </section>

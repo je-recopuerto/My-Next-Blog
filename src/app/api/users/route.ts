@@ -10,35 +10,35 @@ import { rateLimit } from "../../../../lib/utils/rateLimit";
 // DB connection helper
 const dbConnect = ConnectDB;
 
-// Kullanıcıları listele
+// List users
 export async function GET() {
     const session = await getServerSession(authOptions);
     
     if (!session) {
         return NextResponse.json({ 
             success: false, 
-            message: "Yetkisiz erişim" 
+            message: "Unauthorized access" 
         }, { status: 401 });
     }
 
     try {
         await ConnectDB();
         
-        // Kullanıcının user:manage yetkisi var mı kontrol et
+        // Check if user has user:manage permission
         const currentUser = await UserModel.findOne({ email: session.user?.email });
         if (!currentUser?.permissions.includes("user:manage")) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Bu işlem için yetkiniz yok" 
+                message: "You don't have permission for this operation" 
             }, { status: 403 });
         }
         
         const users = await UserModel.find({}).sort({ createdAt: -1 });
         
-        // Şifre bilgisini güvenlik açısından gizle, sadece varlığını belirt
+        // Hide password information for security, only indicate existence
         const safeUsers = users.map(user => ({
           ...user.toObject(),
-          password: user.password ? "***" : null // Şifre varsa *** göster
+          password: user.password ? "***" : null // Show *** if password exists
         }));
         
         return NextResponse.json({ 
@@ -49,37 +49,37 @@ export async function GET() {
         console.error("Users fetch error:", error);
         return NextResponse.json({ 
             success: false, 
-            message: "Kullanıcılar yüklenirken hata oluştu" 
+            message: "Error occurred while loading users" 
         }, { status: 500 });
     }
 }
 
-// Kullanıcı rolü güncelle
+// Update user role
 export async function PUT(request: Request) {
     const session = await getServerSession(authOptions);
     
     if (!session) {
         return NextResponse.json({ 
             success: false, 
-            message: "Yetkisiz erişim" 
+            message: "Unauthorized access" 
         }, { status: 401 });
     }
 
     try {
         await ConnectDB();
         
-        // Kullanıcının user:manage yetkisi var mı kontrol et
+        // Check if user has user:manage permission
         const currentUser = await UserModel.findOne({ email: session.user?.email });
         if (!currentUser?.permissions.includes("user:manage")) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Bu işlem için yetkiniz yok" 
+                message: "You don't have permission for this operation" 
             }, { status: 403 });
         }
 
         const { userId, role, isActive } = await request.json();
         
-        // Owner rolündeki kullanıcının rolü değiştirilemez
+        // User with Owner role cannot be changed
         const targetUser = await UserModel.findById(userId);
         if (targetUser?.role === "Owner") {
             return NextResponse.json({ 
@@ -96,19 +96,19 @@ export async function PUT(request: Request) {
         
         return NextResponse.json({ 
             success: true, 
-            message: "Kullanıcı başarıyla güncellendi",
+            message: "User updated successfully",
             user: updatedUser
         });
     } catch (error) {
         console.error("User update error:", error);
         return NextResponse.json({ 
             success: false, 
-            message: "Kullanıcı güncellenirken hata oluştu" 
+            message: "Error occurred while updating user" 
         }, { status: 500 });
     }
 }
 
-// POST - Yeni kullanıcı ekleme
+// POST - Add new user
 export async function POST(request: Request) {
     try {
         await dbConnect();
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
         if (!session?.user) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Giriş yapmanız gerekli" 
+                message: "You need to log in" 
             }, { status: 401 });
         }
         
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
         if (!rateLimitResult.success) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Çok fazla istek. Lütfen bekleyin." 
+                message: "Too many requests. Please wait." 
             }, { status: 429 });
         }
         
@@ -136,24 +136,24 @@ export async function POST(request: Request) {
         if (!currentUser?.permissions.includes("user:manage")) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Bu işlem için yetkiniz yok" 
+                message: "You don't have permission for this operation" 
             }, { status: 403 });
         }
 
         const { name, email, password, role } = await request.json();
         
-        // Input validation ve sanitization
+        // Input validation and sanitization
         if (!validateName(name)) {
             return NextResponse.json({ 
                 success: false, 
-                message: "İsim 2-50 karakter arasında olmalıdır" 
+                message: "Name must be between 2-50 characters" 
             }, { status: 400 });
         }
         
         if (!validateEmail(email)) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Geçerli bir email adresi giriniz" 
+                message: "Please enter a valid email address" 
             }, { status: 400 });
         }
         
@@ -170,7 +170,7 @@ export async function POST(request: Request) {
         if (!validateRole(role)) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Geçerli bir rol seçiniz" 
+                message: "Please select a valid role" 
             }, { status: 400 });
         }
         
@@ -178,12 +178,12 @@ export async function POST(request: Request) {
         const sanitizedName = sanitizeInput(name);
         const sanitizedEmail = email.toLowerCase().trim();
         
-        // Email kontrolü
+        // Email check
         const existingUser = await UserModel.findOne({ email: sanitizedEmail });
         if (existingUser) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Bu email adresi zaten kullanılıyor" 
+                message: "This email address is already in use" 
             }, { status: 400 });
         }
 
@@ -205,7 +205,7 @@ export async function POST(request: Request) {
         
         return NextResponse.json({ 
             success: true, 
-            message: "Kullanıcı başarıyla eklendi",
+            message: "User added successfully",
             user: {
                 _id: newUser._id,
                 name: newUser.name,
@@ -220,12 +220,12 @@ export async function POST(request: Request) {
         console.error("User creation error:", error);
         return NextResponse.json({ 
             success: false, 
-            message: "Kullanıcı eklenirken hata oluştu" 
+            message: "Error occurred while adding user" 
         }, { status: 500 });
     }
 }
 
-// DELETE - Kullanıcı silme
+// DELETE - Delete user
 export async function DELETE(request: Request) {
     try {
         await dbConnect();
@@ -234,7 +234,7 @@ export async function DELETE(request: Request) {
         if (!session?.user) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Giriş yapmanız gerekli" 
+                message: "You need to log in" 
             }, { status: 401 });
         }
         
@@ -242,7 +242,7 @@ export async function DELETE(request: Request) {
         if (!currentUser?.permissions.includes("user:manage")) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Bu işlem için yetkiniz yok" 
+                message: "You don't have permission for this operation" 
             }, { status: 403 });
         }
 
@@ -252,24 +252,24 @@ export async function DELETE(request: Request) {
         if (!userId) {
             return NextResponse.json({ 
                 success: false, 
-                message: "User ID gerekli" 
+                message: "User ID is required" 
             }, { status: 400 });
         }
 
-        // Owner rolündeki kullanıcı silinemez
+        // Users with Owner role cannot be deleted
         const targetUser = await UserModel.findById(userId);
         if (targetUser?.role === "Owner") {
             return NextResponse.json({ 
                 success: false, 
-                message: "Owner rolündeki kullanıcı silinemez" 
+                message: "Users with Owner role cannot be deleted" 
             }, { status: 403 });
         }
 
-        // Kendi hesabını silme kontrolü
+        // Check for deleting own account
         if (targetUser?.email === session.user.email) {
             return NextResponse.json({ 
                 success: false, 
-                message: "Kendi hesabınızı silemezsiniz" 
+                message: "You cannot delete your own account" 
             }, { status: 403 });
         }
 
@@ -277,13 +277,13 @@ export async function DELETE(request: Request) {
         
         return NextResponse.json({ 
             success: true, 
-            message: "Kullanıcı başarıyla silindi"
+            message: "User deleted successfully"
         });
     } catch (error) {
         console.error("User deletion error:", error);
         return NextResponse.json({ 
             success: false, 
-            message: "Kullanıcı silinirken hata oluştu" 
+            message: "Error occurred while deleting user" 
         }, { status: 500 });
     }
 }

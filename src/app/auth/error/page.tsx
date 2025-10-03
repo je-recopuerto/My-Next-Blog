@@ -2,6 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { FaExclamationTriangle } from "react-icons/fa"
 import { Suspense } from "react"
+import Footer from "../../components/Footer"
 
 function AuthErrorContent() {
   const router = useRouter()
@@ -48,6 +49,7 @@ function AuthErrorContent() {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

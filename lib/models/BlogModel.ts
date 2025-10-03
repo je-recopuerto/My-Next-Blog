@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import './CategoryModel'; // Category model'ini yükle
-import './UserModel'; // User model'ini yükle
+import './CategoryModel';
+import './UserModel';
 
 const Schema = new mongoose.Schema({
     title:{

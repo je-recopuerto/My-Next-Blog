@@ -54,7 +54,7 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
     console.log("formData ==> ", formData);
     
     if (!formData.title || !formData.category) {
-      alert('Lütfen önce başlık ve kategori seçin!');
+      alert('Please select title and category first!');
       return;
     }
 
@@ -86,13 +86,13 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({
           ...prev,
           content: data.content
         }));
-        alert('İçerik başarıyla oluşturuldu!');
+        alert('Content created successfully!');
       } else {
-        alert(data.message || 'İçerik oluşturulurken hata oluştu');
+        alert(data.message || 'Error occurred while creating content');
       }
     } catch (error) {
       console.error('AI Content Generation Error:', error);
-      alert('İçerik oluşturulurken hata oluştu');
+      alert('Error occurred while creating content');
     } finally {
       setAiLoading(false);
     }

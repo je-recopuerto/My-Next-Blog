@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user?.email) {
       return NextResponse.json(
-        { success: false, message: 'Yetkisiz erişim' },
+        { success: false, message: 'Unauthorized access' },
         { status: 401 }
       );
     }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     // API key kontrolü
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
-        { success: false, message: 'Gemini API anahtarı yapılandırılmamış' },
+        { success: false, message: 'Gemini API key not configured' },
         { status: 500 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Input validation
     if (!title || !category) {
       return NextResponse.json(
-        { success: false, message: 'Title ve category gerekli' },
+        { success: false, message: 'Title and category are required' },
         { status: 400 }
       );
     }
@@ -81,7 +81,7 @@ Only return the blog content, do not add any extra explanation.
     return NextResponse.json({
       success: true,
       content: generatedContent,
-      message: 'İçerik başarıyla oluşturuldu'
+      message: 'Content created successfully'
     });
 
   } catch (error: unknown) {
@@ -99,7 +99,7 @@ Only return the blog content, do not add any extra explanation.
     // API key hatası kontrolü
     if (errorMessage?.includes('API_KEY_INVALID') || errorMessage?.includes('API key')) {
       return NextResponse.json(
-        { success: false, message: 'Gemini API anahtarı geçersiz veya eksik' },
+        { success: false, message: 'Gemini API key invalid or missing' },
         { status: 500 }
       );
     }
@@ -107,7 +107,7 @@ Only return the blog content, do not add any extra explanation.
     // Quota hatası kontrolü
     if (errorMessage?.includes('quota') || errorMessage?.includes('limit')) {
       return NextResponse.json(
-        { success: false, message: 'Gemini API kullanım limitine ulaşıldı' },
+        { success: false, message: 'Gemini API usage limit reached' },
         { status: 429 }
       );
     }
@@ -116,7 +116,7 @@ Only return the blog content, do not add any extra explanation.
     console.log("error.message ==> ", errorMessage);
     if (errorMessage?.includes('fetch') || errorMessage?.includes('network')) {
       return NextResponse.json(
-        { success: false, message: 'Gemini API bağlantı hatası' },
+        { success: false, message: 'Gemini API connection error' },
         { status: 503 }
       );
     }
@@ -124,7 +124,7 @@ Only return the blog content, do not add any extra explanation.
     return NextResponse.json(
       { 
         success: false, 
-        message: 'İçerik oluşturulurken bir hata oluştu',
+        message: 'An error occurred while creating content',
         error: errorMessage // Debug için hata mesajını da gönder
       },
       { status: 500 }

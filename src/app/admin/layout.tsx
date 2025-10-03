@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import Sidebar from "./components/Sidebar";
+import Footer from "../components/Footer";
 import { Card } from "../components/ui/card";
 import { SidebarProvider, useSidebar } from "./components/SidebarContext";
 
@@ -12,12 +13,13 @@ function AdminContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className={`flex-1 overflow-hidden transition-all duration-300 ${
+      <main className={`flex-1 overflow-hidden transition-all duration-300 flex flex-col ${
         isOpen ? 'lg:ml-0' : 'lg:ml-0'
       }`}>
-        <div className="h-full bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="flex-grow bg-gradient-to-br from-slate-50 to-slate-100">
           {children}
         </div>
+        <Footer />
       </main>
     </div>
   )

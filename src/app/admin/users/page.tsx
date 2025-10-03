@@ -184,7 +184,7 @@ const UsersPage = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="flex-1 ml-64 p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className=" mx-auto">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">

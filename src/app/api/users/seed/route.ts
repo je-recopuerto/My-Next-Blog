@@ -22,8 +22,8 @@ export async function POST() {
         console.log("hashedPassword ==> ", hashedPassword);
 
         const ownerUser = await UserModel.create({
-            email: "emirhan_gungor2009@hotmail.com",
-            name: "Emirhan Güngör",
+            email: "admin@admin.com",
+            name: "Admin",
             role: "Owner",
             password: hashedPassword,
             isActive: true
