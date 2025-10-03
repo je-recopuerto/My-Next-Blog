@@ -2,6 +2,8 @@ import ReactMarkdown from "react-markdown";
 import { notFound } from "next/navigation";
 import MainLayout from "../../components/MainLayout";
 import BlogImage from "./components/BlogImage";
+import Link from "next/link";
+import type { Metadata } from "next";
 
 interface BlogParams {
   params: Promise<{ slug: string }>;
@@ -47,6 +49,91 @@ async function getBlogPost(slug: string): Promise<Post | null> {
   }
 }
 
+// Dynamic Metadata Generation
+export async function generateMetadata({ params }: BlogParams): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getBlogPost(slug);
+
+  if (!post) {
+    return {
+      title: "Blog Post Not Found",
+      description: "The requested blog post could not be found.",
+    };
+  }
+
+  const siteUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  
+  return {
+    title: `${post.title} | Emirhan's Blog`,
+    description: post.summary || post.content.slice(0, 160) + "...",
+    keywords: [
+      post.category.name,
+      "blog",
+      "technology",
+      "software",
+      "Emirhan",
+      ...post.title.split(" ").slice(0, 5)
+    ],
+    authors: [{ name: post.author.name }],
+    openGraph: {
+      title: post.title,
+      description: post.summary || post.content.slice(0, 160) + "...",
+      type: "article",
+      url: `${siteUrl}/blog/${post.slug}`,
+      images: [
+        {
+          url: post.image,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      publishedTime: post.date,
+      authors: [post.author.name],
+      section: post.category.name,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.summary || post.content.slice(0, 160) + "...",
+      images: [post.image],
+      creator: "@emrhngngr", // Twitter handle'ınızı buraya ekleyin
+    },
+    other: {
+      "article:author": post.author.name,
+      "article:section": post.category.name,
+      "article:published_time": post.date,
+      // Schema.org Article structured data
+      "application/ld+json": JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "description": post.summary || post.content.slice(0, 160) + "...",
+        "image": post.image,
+        "author": {
+          "@type": "Person",
+          "name": post.author.name,
+          "email": post.author.email
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "Emirhan Güngör",
+          "url": siteUrl
+        },
+        "datePublished": post.date,
+        "dateModified": post.date,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": `${siteUrl}/blog/${post.slug}`
+        },
+        "articleSection": post.category.name,
+        "wordCount": post.content.split(" ").length,
+        "url": `${siteUrl}/blog/${post.slug}`
+      })
+    }
+  };
+}
+
 export default async function BlogDetailPage({ params }: BlogParams) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
@@ -56,12 +143,55 @@ export default async function BlogDetailPage({ params }: BlogParams) {
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto py-8">
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="mb-6">
+          <ol className="flex items-center space-x-2 text-sm text-gray-500">
+            <li>
+              <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            </li>
+            <li className="flex items-center">
+              <span className="mx-2">›</span>
+              <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
+            </li>
+            <li className="flex items-center">
+              <span className="mx-2">›</span>
+              <span className="font-medium text-gray-900">{post.title}</span>
+            </li>
+          </ol>
+        </nav>
+
         <BlogImage
           src={post.image}
           alt={post.title}
           className="w-full object-cover rounded-lg mb-6"
         />
-        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+        
+        {/* Article Header */}
+        <header className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
+              {post.category?.name}
+            </span>
+            <time 
+              dateTime={post.date}
+              className="text-gray-500 text-sm"
+            >
+              {new Date(post.date).toLocaleDateString('tr-TR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+          </div>
+          
+          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          
+          <div className="flex items-center gap-3 text-sm text-gray-600">
+            <span>By {post.author.name}</span>
+            <span>•</span>
+            <span>{Math.ceil(post.content.split(' ').length / 200)} min read</span>
+          </div>
+        </header>
         <div className="prose prose-lg max-w-none mb-6">
           <ReactMarkdown
             components={{

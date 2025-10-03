@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Main pages
+Allow: /
+Allow: /blog
+Allow: /blog/*
+Allow: /about
+
+# Admin pages - block from search engines
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+Disallow: /auth/*
+
+# Sitemap location
+Sitemap: https://emrhngngr.tech/sitemap.xml
+
+# Common crawl delays
+Crawl-delay: 1
