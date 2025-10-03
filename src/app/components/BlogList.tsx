@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "./ui/card";
+import { optimizeImage } from "../utils/optimizeImage";
 
 interface Blog {
   _id: string;
@@ -19,6 +20,7 @@ interface Blog {
     name: string;
     slug: string;
   };
+  optimizedImage?: string;
 }
 
 interface BlogListProps {
@@ -34,18 +36,6 @@ const BlogList: React.FC<BlogListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [displayCount, setDisplayCount] = useState(limit);
-
-  const optimizeImageUrl = (url: string) => {
-    if (!url) return "";
-
-    // Cloudinary URL'sine optimizasyon parametreleri ekle
-    const optimizedUrl = url.replace(
-      "/upload/",
-      "/upload/w_800,h_800,q_auto:good,f_auto,c_fill/"
-    );
-
-    return optimizedUrl;
-  };
 
   const truncateContent = (content: string, limit: number = 150) => {
     if (content.length <= limit) return content;
@@ -63,7 +53,11 @@ const BlogList: React.FC<BlogListProps> = ({
       const data = await response.json();
 
       if (data.success) {
-        setBlogs(data.blogs);
+        const dataWithOptimizedImages = data.blogs.map((blog: Blog) => ({
+          ...blog,
+          optimizedImage: optimizeImage(blog.image) || "/blog/asset1.jpg",
+        }));
+        setBlogs(dataWithOptimizedImages);
       } else {
         setError("Blogları yüklerken bir hata oluştu");
       }
@@ -81,7 +75,7 @@ const BlogList: React.FC<BlogListProps> = ({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(limit)].map((_, index) => (
           <div
             key={index}
@@ -142,9 +136,9 @@ const BlogList: React.FC<BlogListProps> = ({
                 <Image
                   width={1920}
                   height={1080}
-                  src={optimizeImageUrl(blog.image)}
+                  src={blog.optimizedImage || "/blog/asset1.jpg"}
                   alt={blog.title}
-                  className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-64 lg:h-96 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">

@@ -176,7 +176,7 @@ export default async function BlogDetailPage({ params }: BlogParams) {
               dateTime={post.date}
               className="text-gray-500 text-sm"
             >
-              {new Date(post.date).toLocaleDateString('tr-TR', {
+              {new Date(post.date).toLocaleDateString('en-EN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

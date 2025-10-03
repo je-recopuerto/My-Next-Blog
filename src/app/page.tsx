@@ -2,6 +2,8 @@ import MainLayout from "./components/MainLayout";
 import BlogList from "./components/BlogList";
 import Image from "next/image";
 import FeaturedBlogs from "./components/FeaturedBlogs";
+import handleSubscribeClick from "./components/SubscribeClick";
+
 export default function Home() {
   return (
     <MainLayout>
@@ -31,7 +33,10 @@ export default function Home() {
               placeholder="Enter your email for updates"
               className="px-6 py-3 rounded-lg text-black bg-white border-0 outline-none focus:ring-4 focus:ring-blue-300 transition-all w-full sm:w-80"
             />
-            <button className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors w-full sm:w-auto">
+            <button
+              className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors w-full sm:w-auto"
+              onClick={handleSubscribeClick}
+            >
               Subscribe
             </button>
           </div>
@@ -41,30 +46,23 @@ export default function Home() {
       {/* Blog List Section */}
       <section className="py-16">
         <div className="mx-auto px-4">
-          <div className="grid grid-cols-12 mb-12">
-            <div className="col-span-9 mr-2">
+          <div className="lg:grid grid-cols-12 mb-12 gap-4">
+            <div className="col-span-9">
               <div className="flex">
                 <h2 className="text-2xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
                   Some blogs are remarkable.
                 </h2>
                 <div className="h-1 bg-gray-300 items-center align-middle opacity-25 rounded-2xl w-full my-4"></div>
               </div>
+              <BlogList limit={6} showLoadMore={false} />
             </div>
             <div className="col-span-3">
-              <div className="flex">
+              <div className="flex mt-8 lg:mt-0">
                 <h2 className="text-xl whitespace-nowrap mx-2 font-bold text-gray-900 mb-4">
                   Featured
                 </h2>
                 <div className="h-1 bg-gray-300 opacity-25 rounded-2xl w-full my-4"></div>
               </div>
-            </div>
-          </div>
-          {/* Blog List Component will go here */}
-          <div className="grid grid-cols-12">
-            <div className="col-span-9">
-              <BlogList limit={6} showLoadMore={false} />
-            </div>
-            <div className="col-span-3">
               <FeaturedBlogs limit={3} />
             </div>
           </div>

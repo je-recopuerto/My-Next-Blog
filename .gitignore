@@ -36,12 +36,22 @@ yarn-error.log*
 .env.test
 .env.production
 
-# security
+# Vercel environment files (if any)
+.vercel.json
+
+# Security sensitive files
 *.key
 *.pem
 *.p12
 *.pfx
 .pnpm-debug.log*
+
+# Additional security
+secrets/
+private/
+.secrets
+.private
+config.local.*
 
 # env files (can opt-in for committing if needed)
 .env*
