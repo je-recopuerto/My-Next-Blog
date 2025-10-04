@@ -12,7 +12,7 @@ export default function Home() {
         <Image
           width={3000}
           height={2000}
-          src={"/blog/asset2.jpg"}
+          src={"/blog/asset3.webp"}
           alt={"Hero background"}
           className="absolute inset-0 w-full h-full rounded-xl object-cover -z-10"
         />
