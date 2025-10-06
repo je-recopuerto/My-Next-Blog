@@ -10,7 +10,7 @@ export async function GET(
     await ConnectDB();
     const { slug } = await params;
 
-    // Önce mevcut blog'u bul
+    // First, find the current blog
     const currentBlog = await BlogModel.findOne({ slug }).populate("category");
     if (!currentBlog) {
       return NextResponse.json(
@@ -24,19 +24,19 @@ export async function GET(
       );
     }
 
-    // Aynı kategoriden ve farklı slug'a sahip blogları getir
+    // Fetch blogs from the same category with a different slug
     const relatedBlogs = await BlogModel.find({
-      slug: { $ne: slug }, // Mevcut blog'u hariç tut
-      category: currentBlog.category._id, // Aynı kategori
+      slug: { $ne: slug }, // Exclude the current blog
+      category: currentBlog.category._id, // Same category
     })
       .populate("category", "name slug")
       .populate("author", "name email")
       .sort({ date: -1 })
-      .limit(3)
+      .limit(5) // Limit to 8 related posts
       .select("title slug summary image date category author");
 
-    // Eğer aynı kategoriden yeteri kadar blog yoksa, diğer kategorilerden ekle
-    if (relatedBlogs.length < 3) {
+    // If there are not enough blogs from the same category, add from other categories
+    if (relatedBlogs.length < 5) {
       const additionalBlogs = await BlogModel.find({
         slug: { $ne: slug },
         category: { $ne: currentBlog.category._id },
@@ -44,7 +44,7 @@ export async function GET(
         .populate("category", "name slug")
         .populate("author", "name email")
         .sort({ date: -1 })
-        .limit(3 - relatedBlogs.length)
+        .limit(10 - relatedBlogs.length)
         .select("title slug summary image date category author");
 
       relatedBlogs.push(...additionalBlogs);

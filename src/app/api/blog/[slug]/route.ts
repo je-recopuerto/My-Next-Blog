@@ -36,7 +36,7 @@ export async function GET(
     
     if (!blog) {
       return NextResponse.json(
-        { success: false, message: "Blog bulunamadı" },
+        { success: false, message: "Blog not found" },
         { status: 404 }
       );
     }
@@ -48,7 +48,7 @@ export async function GET(
   } catch (error) {
     console.error("Blog fetch error:", error);
     return NextResponse.json(
-      { success: false, message: "Blog getirilirken hata oluştu" },
+      { success: false, message: "Error occurred while fetching blog" },
       { status: 500 }
     );
   }
@@ -70,19 +70,19 @@ export async function DELETE(
 
     if (!deletedBlog) {
       return NextResponse.json(
-        { success: false, message: "Blog bulunamadı" },
+        { success: false, message: "Blog not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "Blog başarıyla silindi",
+      message: "Blog successfully deleted",
     });
   } catch (error) {
-    console.error("Blog silme hatası:", error);
+    console.error("Blog deletion error:", error);
     return NextResponse.json(
-      { success: false, message: "Blog silinirken hata oluştu" },
+      { success: false, message: "Error occurred while deleting blog" },
       { status: 500 }
     );
   }
@@ -97,7 +97,7 @@ export async function PUT(
   if (!session?.user?.email) {
     return NextResponse.json({ 
       success: false, 
-      message: "Yetkisiz erişim" 
+      message: "Unauthorized access" 
     }, { status: 401 });
   }
 
@@ -105,12 +105,12 @@ export async function PUT(
     await ConnectDB();
     const { slug } = await params;
 
-    // Blog düzenleme yetkisi kontrolü
+    // Blog editing permission check
     const user = await UserModel.findOne({ email: session.user.email });
     if (!user?.permissions?.includes("blog:edit")) {
       return NextResponse.json({ 
         success: false, 
-        message: "Blog düzenleme yetkiniz yok" 
+        message: "You do not have permission to edit blogs" 
       }, { status: 403 });
     }
 
@@ -119,7 +119,7 @@ export async function PUT(
     let title, content, category, author, newImage = null;
     
     if (contentType?.includes("multipart/form-data")) {
-      // FormData ile gelen request (görsel ile)
+      // Request coming with FormData (with image)
       const formData = await request.formData();
       title = formData.get("title");
       content = formData.get("content");
@@ -127,7 +127,7 @@ export async function PUT(
       author = formData.get("author");
       newImage = formData.get("image") as File;
     } else {
-      // JSON request (görsel olmadan)
+      // JSON request (without image)
       const body = await request.json();
       ({ title, content, category, author } = body);
     }
@@ -136,21 +136,21 @@ export async function PUT(
     const isObjectId = /^[a-f\d]{24}$/i.test(slug);
     const query = isObjectId ? { _id: slug } : { slug: slug };
 
-    // Mevcut blog'u bul
+    // Find existing blog
     const existingBlog = await BlogModel.findOne(query);
     if (!existingBlog) {
       return NextResponse.json(
-        { success: false, message: "Blog bulunamadı" },
+        { success: false, message: "Blog not found" },
         { status: 404 }
       );
     }
 
-    // Yeni görsel yükleme ve eski görsel silme
-    let imgUrl = existingBlog.image; // Varsayılan olarak mevcut görseli kullan
+    // Upload new image and delete old image
+    let imgUrl = existingBlog.image; // Use existing image as default
     
     if (newImage && newImage.size > 0) {
       try {
-        // Eski görseli Cloudinary'den sil
+        // Delete old image from Cloudinary
         if (existingBlog.image) {
           const publicId = existingBlog.image.split('/').pop()?.split('.')[0];
           if (publicId) {
@@ -158,7 +158,7 @@ export async function PUT(
           }
         }
 
-        // Yeni görseli yükle
+        // Upload new image
         const arrayBuffer = await newImage.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const uploadResult = await new Promise((resolve, reject) => {
@@ -175,7 +175,7 @@ export async function PUT(
       } catch (imageError) {
         console.error("Image upload error:", imageError);
         return NextResponse.json(
-          { success: false, message: "Görsel yüklenirken hata oluştu" },
+          { success: false, message: "Error occurred while uploading image" },
           { status: 500 }
         );
       }
@@ -211,13 +211,13 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: "Blog başarıyla güncellendi",
+      message: "Blog successfully updated",
       blog: updatedBlog
     });
   } catch (error) {
-    console.error("Blog güncelleme hatası:", error);
+    console.error("Blog update error:", error);
     return NextResponse.json(
-      { success: false, message: "Blog güncellenirken hata oluştu" },
+      { success: false, message: "Error occurred while updating blog" },
       { status: 500 }
     );
   }

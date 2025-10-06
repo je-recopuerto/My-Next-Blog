@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 
-// Gemini AI'ı initialize et
+// Initialize Gemini AI
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
   console.error('GEMINI_API_KEY environment variable is not set');
@@ -12,7 +12,7 @@ const genAI = new GoogleGenerativeAI(apiKey!);
 
 export async function POST(request: NextRequest) {
   try {
-    // Kullanıcı authentication kontrolü
+    // Check user authentication
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, category, summary } = body;
 
-    // API key kontrolü
+    // Check if API key is configured
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { success: false, message: 'Gemini API key not configured' },
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Input validation
+    // Validate input
     if (!title || !category) {
       return NextResponse.json(
         { success: false, message: 'Title and category are required' },
@@ -41,10 +41,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Gemini model'i al
+    // Retrieve the Gemini model
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-    // Prompt oluştur
+    // Create the prompt
     const prompt = `
 "You are a professional blog writer. Based on the information below, create a detailed, SEO-friendly blog post in Markdown format:
 
@@ -96,7 +96,7 @@ Only return the blog content, do not add any extra explanation.
       apiKey: process.env.GEMINI_API_KEY ? 'Set' : 'Not Set'
     });
     
-    // API key hatası kontrolü
+    // API key error check
     if (errorMessage?.includes('API_KEY_INVALID') || errorMessage?.includes('API key')) {
       return NextResponse.json(
         { success: false, message: 'Gemini API key invalid or missing' },
@@ -104,7 +104,7 @@ Only return the blog content, do not add any extra explanation.
       );
     }
 
-    // Quota hatası kontrolü
+    // Quota error check
     if (errorMessage?.includes('quota') || errorMessage?.includes('limit')) {
       return NextResponse.json(
         { success: false, message: 'Gemini API usage limit reached' },
@@ -112,7 +112,7 @@ Only return the blog content, do not add any extra explanation.
       );
     }
 
-    // Network hatası kontrolü
+    // Network error check
     console.log("error.message ==> ", errorMessage);
     if (errorMessage?.includes('fetch') || errorMessage?.includes('network')) {
       return NextResponse.json(
@@ -125,7 +125,7 @@ Only return the blog content, do not add any extra explanation.
       { 
         success: false, 
         message: 'An error occurred while creating content',
-        error: errorMessage // Debug için hata mesajını da gönder
+        error: errorMessage // Send error message for debugging
       },
       { status: 500 }
     );

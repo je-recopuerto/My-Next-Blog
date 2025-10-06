@@ -128,3 +128,31 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Embla Carousel Styles */
+.embla {
+  position: relative;
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  backface-visibility: hidden;
+}
+
+.embla__slide {
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* Hide scrollbar */
+.embla::-webkit-scrollbar {
+  display: none;
+}
+
+.embla {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

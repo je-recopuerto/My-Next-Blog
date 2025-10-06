@@ -41,6 +41,11 @@ const Sidebar = () => {
       href: '/admin/blogList',
       icon: FileText,
       label: 'All Posts',
+    },    
+    {
+      href: '/admin/categories',
+      icon: FileText,
+      label: 'Categories',
     },
     {
       href: '/admin/users',
