@@ -31,15 +31,8 @@ interface RelatedPostsProps {
 
 async function getRelatedPosts(slug: string): Promise<RelatedBlog[]> {
   try {
-    let baseUrl: string;
-    
-    if (process.env.NODE_ENV === 'development') {
-      baseUrl = "http://localhost:3000";
-    } else {
-      baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    }
-    
-    const apiUrl = `${baseUrl}/api/blog/${encodeURIComponent(slug)}/related`;
+    // Use relative URL for API calls - this works in both development and production
+    const apiUrl = `/api/blog/${encodeURIComponent(slug)}/related`;
     
     const response = await fetch(apiUrl, {
       cache: "no-store",
@@ -173,6 +166,7 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentSlug }) => {
                     src={post.image}
                     alt={post.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>

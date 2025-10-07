@@ -165,6 +165,7 @@ export default async function BlogDetailPage({ params }: BlogParams) {
           src={post.image}
           alt={post.title}
           className="w-full object-cover rounded-lg mb-6"
+          priority={true}
         />
         
         {/* Article Header */}
