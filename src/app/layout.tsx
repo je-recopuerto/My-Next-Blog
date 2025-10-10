@@ -96,7 +96,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang="en">
       <head>
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://res.cloudinary.com" />

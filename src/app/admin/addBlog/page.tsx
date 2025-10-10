@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import AddBlogForm from "./components/AddBlogForm";
+import { compressImage, validateImageFile } from "../../utils/imageCompression";
 
 interface Category {
   _id: string;
@@ -77,24 +78,47 @@ const AddBlogPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!formData.title || !formData.content || !formData.category) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+    
     if (!image) {
       alert("Please select an image!");
+      return;
+    }
+
+    // Validate image
+    const validation = validateImageFile(image, 10); // 10MB limit
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     setLoading(true);
 
     try {
+      // Compress image before sending
+      const compressedImage = await compressImage(image, 2, 0.8); // 2MB max, 80% quality
+      
+      console.log(`Original size: ${(image.size / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Compressed size: ${(compressedImage.size / 1024 / 1024).toFixed(2)}MB`);
+
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("content", formData.content);
       formDataToSend.append("category", formData.category);
-      formDataToSend.append("image", image);
+      formDataToSend.append("image", compressedImage); // Use compressed image
 
       const response = await fetch('/api/blog', {
         method: 'POST',
         body: formDataToSend,
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
 
       const data = await response.json();
 

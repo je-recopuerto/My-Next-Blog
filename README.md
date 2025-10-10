@@ -1,6 +1,14 @@
 
 # Next.js Blog CMS
 
+<div align="center">  
+  [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+  [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://www.mongodb.com/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8)](https://tailwindcss.com/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+</div>
+
 > **Note:** This project is currently on hold. The backend is mostly complete, and the frontend will be finalized soon.
 
 A modern blog content management system built with Next.js 15, TypeScript, MongoDB, and NextAuth.js. Features an admin panel for managing blogs, categories, and **AI-Powered Content Creation** using the Gemini API.
@@ -15,6 +23,46 @@ A modern blog content management system built with Next.js 15, TypeScript, Mongo
 - **Responsive Design**: Mobile-first responsive UI
 - **SEO Optimized**: Meta tags, Schema.org structured data
 - **Rich Text Editor**: Markdown support for blog content
+
+## 📸 Screenshots
+
+### 🏠 Homepage
+<div align="center">
+  <img src="./screenshots/homepage.jpg" alt="Homepage" width="800" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>Clean and modern homepage design with featured blog posts</em></p>
+</div>
+
+### 📝 Blog Page
+<div align="center">
+  <img src="./screenshots/blog-page.jpg" alt="Blog Page" width="800" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>Responsive blog listing with category filtering and search functionality</em></p>
+</div>
+
+### 📖 Blog Detail Page
+<div align="center">
+  <img src="./screenshots/blog-detail.jpg" alt="Blog Detail" width="800" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>Rich blog post view with markdown rendering and SEO optimization</em></p>
+</div>
+
+### 🔧 Admin Dashboard
+<div align="center">
+  <img src="./screenshots/admin-dashboard.jpg" alt="Admin Dashboard" width="800" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>Comprehensive admin panel for content management</em></p>
+</div>
+
+### ✨ AI Content Generation
+<div align="center">
+  <img src="./screenshots/ai-content-generation.jpg" alt="AI Content Generation" width="800" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>AI-powered content creation using Google Gemini API</em></p>
+</div>
+
+## 🚀 Performance & SEO
+
+### ⚡ Perfect Performance & SEO Scores
+<div align="center">
+  <img src="./screenshots/pagespeed-performance.jpg" alt="PageSpeed Insights" width="600" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <p><em>Perfect 100/100 scores across all PageSpeed Insights</em></p>
+</div>
 
 ## 🛠️ Tech Stack
 
@@ -101,7 +149,7 @@ A modern blog content management system built with Next.js 15, TypeScript, Mongo
 - `/api/auth/*`: NextAuth authentication
 - `/api/blog`: Blog CRUD operations
 - `/api/categories`: Category management
-- `/api/ai-content`: Generate content via Gemini API (input: title, summary, category)
+- `/api/ai/generate-content`: Generate content via Gemini API (input: title, summary, category)
 
 ## 🚀 Deployment
 
@@ -110,6 +158,19 @@ A modern blog content management system built with Next.js 15, TypeScript, Mongo
 2. Connect to [Vercel](https://vercel.com).
 3. Add environment variables in Vercel dashboard.
 4. Update `NEXTAUTH_URL` to production domain.
+
+## 📊 Performance Metrics
+
+<div align="center">
+  
+| Metric | Score | Description |
+|--------|-------|-------------|
+| **Performance** | 100/100 | ⚡ Optimized loading and rendering |
+| **Accessibility** | 100/100 | ♿ WCAG compliance and screen reader support |
+| **Best Practices** | 100/100 | 🔒 Security and modern web standards |
+| **SEO** | 100/100 | 🔍 Search engine optimization |
+
+</div>
 
 ## 🛡️ Security Features
 
@@ -133,7 +194,13 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## 👨‍💻 Author
 
 **Emirhan Güngör**
+- GitHub: [@emrhngngr](https://github.com/emrhngngr)
+- LinkedIn: [Emirhan Güngör](https://linkedin.com/in/emrhn-gngr)
 
-**Happy Blogging! 🎉**
+---
 
-For support, open an issue on GitHub.
+<div align="center">
+  <h3>⭐ If you found this project helpful, please give it a star! ⭐</h3>
+  <p><strong>Happy Blogging! 🎉</strong></p>
+  <p>For support, open an issue on GitHub.</p>
+</div>
