@@ -1,7 +1,8 @@
 
 # Next.js Blog CMS
 
-<div align="center">  
+<div align="center">
+  
   [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
   [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://www.mongodb.com/)
