@@ -13,7 +13,7 @@ Thank you for your interest in contributing to NextBlog!
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/yourusername/next-blog.git
+   git clone https://github.com/emrhngngr/nextblog.git
    cd next-blog
    ```
 
