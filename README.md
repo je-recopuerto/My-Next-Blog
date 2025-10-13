@@ -89,7 +89,7 @@ A modern blog content management system built with Next.js 15, TypeScript, Mongo
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/nextblog.git
+   git clone https://github.com/emrhngngr/nextblog.git
    cd nextblog
    ```
 
