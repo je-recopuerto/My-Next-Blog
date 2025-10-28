@@ -1,6 +1,9 @@
 import {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  // Trailing slash configuration - prevent duplicate URLs
+  trailingSlash: false,
+  
   images: {
     remotePatterns: [
       {
@@ -17,14 +20,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-    responseLimit: '10mb',
-  },
   experimental: {
     largePageDataBytes: 128 * 1024, // 128KB
+  },
+  
+  // Headers for better SEO
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'index, follow',
+          },
+        ],
+      },
+    ];
   },
 };
 

@@ -3,7 +3,7 @@ import { ConnectDB } from "../../../../../lib/config/db";
 import BlogModel from "../../../../../lib/models/BlogModel";
 import UserModel from "../../../../../lib/models/UserModel";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../../../../lib/auth";
 import cloudinary from "../../../../../lib/config/cloudinary";
 
 export async function GET(

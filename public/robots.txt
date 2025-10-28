@@ -16,5 +16,5 @@ Disallow: /auth/*
 # Sitemap location
 Sitemap: https://emrhngngr.tech/sitemap.xml
 
-# Common crawl delays
-Crawl-delay: 1
+# Crawl optimization
+Crawl-delay: 0

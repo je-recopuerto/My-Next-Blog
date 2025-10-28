@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   title: "Blog | All Articles about Technology & Software",
   description: "Browse all articles about software development, programming, web technologies, and tech insights by Emirhan Güngör.",
   keywords: ["blog articles", "programming tutorials", "software development", "web development", "technology articles"],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: "Blog | All Articles about Technology & Software",
     description: "Browse all articles about software development, programming, web technologies, and tech insights by Emirhan Güngör.",
@@ -21,7 +32,7 @@ export const metadata: Metadata = {
     description: "Browse all articles about software development, programming, web technologies, and tech insights by Emirhan Güngör.",
   },
   alternates: {
-    canonical: "/blog",
+    canonical: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/blog`,
   },
 };
 

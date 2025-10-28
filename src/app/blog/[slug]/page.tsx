@@ -36,7 +36,7 @@ async function getBlogPost(slug: string): Promise<Post | null> {
     const res = await fetch(
       `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/blog/${slug}`,
       {
-        cache: "no-store",
+        next: { revalidate: 3600 }, // Revalidate every hour instead of no-store
       }
     );
 
@@ -47,6 +47,30 @@ async function getBlogPost(slug: string): Promise<Post | null> {
   } catch (error) {
     console.error("Blog fetch error:", error);
     return null;
+  }
+}
+
+// Generate static params for all blog posts
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/blog`,
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    const blogs = data.success ? data.blogs : [];
+
+    return blogs.map((blog: { slug: string }) => ({
+      slug: blog.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
   }
 }
 
@@ -63,6 +87,7 @@ export async function generateMetadata({ params }: BlogParams): Promise<Metadata
   }
 
   const siteUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const blogUrl = `${siteUrl}/blog/${post.slug}`;
   
   return {
     title: `${post.title} | Emirhan's Blog`,
@@ -76,11 +101,25 @@ export async function generateMetadata({ params }: BlogParams): Promise<Metadata
       ...post.title.split(" ").slice(0, 5)
     ],
     authors: [{ name: post.author.name }],
+    alternates: {
+      canonical: blogUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     openGraph: {
       title: post.title,
       description: post.summary || post.content.slice(0, 160) + "...",
       type: "article",
-      url: `${siteUrl}/blog/${post.slug}`,
+      url: blogUrl,
       images: [
         {
           url: post.image,

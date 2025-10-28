@@ -5,7 +5,7 @@ import UserModel from "../../../../lib/models/UserModel"
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CategoryModel from "../../../../lib/models/CategoryModel"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth]/route"
+import { authOptions } from "../../../../lib/auth"
 import cloudinary from '../../../../lib/config/cloudinary';
 
 export async function GET() {

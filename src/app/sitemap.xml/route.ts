@@ -14,16 +14,27 @@ interface BlogData {
 async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
     const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/blog`, {
-      cache: 'no-store'
+      next: { revalidate: 3600 } // Cache for 1 hour
     });
     
-    if (!response.ok) return [];
+    if (!response.ok) {
+      console.error('Failed to fetch blogs:', response.status);
+      return [];
+    }
     
     const data = await response.json();
-    return data.success ? data.blogs.map((blog: BlogData) => ({
-      slug: blog.slug,
-      date: blog.date
-    })) : [];
+    
+    if (!data.success || !Array.isArray(data.blogs)) {
+      console.error('Invalid blog data structure');
+      return [];
+    }
+    
+    return data.blogs
+      .filter((blog: BlogData) => blog.slug && blog.date) // Filter out invalid entries
+      .map((blog: BlogData) => ({
+        slug: blog.slug,
+        date: blog.date
+      }));
   } catch (error) {
     console.error('Error fetching blogs for sitemap:', error);
     return [];
