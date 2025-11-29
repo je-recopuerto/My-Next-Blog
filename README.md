@@ -14,7 +14,7 @@
 
 A modern blog content management system built with Next.js 15, TypeScript, MongoDB, and NextAuth.js. Features an admin panel for managing blogs, categories, and **AI-Powered Content Creation** using the Gemini API.
 
-## 🚀 Features
+## 🚀 😍 Features
 
 - **Modern Tech Stack**: Next.js 15, TypeScript, Tailwind CSS
 - **Authentication**: NextAuth.js with GitHub OAuth and credentials
